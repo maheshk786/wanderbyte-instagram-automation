@@ -1,15 +1,16 @@
+
 [
   {
     "id": "wanderbyte-test-001",
     "slot": "08:00",
-    "image": "assets/images/Wanderbyte1.jpg",
+    "image": "assets/images/wanderbyte_honda_dio_camping.jpg",
     "caption": "A little test post from Wanderbyte. 🌿",
     "hashtags": [
       "WanderbyteExe",
       "NaturePhotography",
       "ExploreIndia"
     ],
-    "alt_text": "Test image for the Wanderbyte Instagram publishing workflow.",
+    "alt_text": "A Honda Dio scooter set up for a camping adventure.",
     "enabled": true
   }
 ]
