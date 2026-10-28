@@ -6,6 +6,13 @@
       "slot": "18:30",
       "published_at_ist": "2026-10-29T00:03:11+05:30",
       "image": "assets/images/scooter_roadtrip.jpg"
+    },
+    {
+      "post_id": "wanderbyte-winter-travel-001",
+      "media_id": "18014262065971492",
+      "slot": "21:00",
+      "published_at_ist": "2026-10-29T01:58:09+05:30",
+      "image": "assets/images/winter_mountain_escape.jpg"
     }
   ]
 }
