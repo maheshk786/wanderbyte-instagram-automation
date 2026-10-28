@@ -1,16 +1,71 @@
 
 [
   {
-    "id": "wanderbyte-test-001",
-    "slot": "08:00",
-    "image": "assets/images/wanderbyte_honda_dio_camping.jpg",
-    "caption": "A little test post from Wanderbyte. 🌿",
+    "id": "wanderbyte-snow-mountains-001",
+    "slot": "09:00",
+    "image": "assets/images/snow_mountains.jpg",
+    "caption": "Chasing snowy peaks, quiet roads, and the freedom only the mountains can offer. 🏔️❄️ Every journey has a story. Follow @wanderbyte.exe for more travel adventures!",
     "hashtags": [
       "WanderbyteExe",
+      "SnowMountains",
+      "MountainLovers",
+      "ExploreIndia",
       "NaturePhotography",
-      "ExploreIndia"
+      "MountainViews",
+      "TravelIndia"
     ],
-    "alt_text": "A Honda Dio scooter set up for a camping adventure.",
+    "alt_text": "Travel, nature, mountain landscapes, camping, and outdoor adventures in India.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-camping-001",
+    "slot": "13:00",
+    "image": "assets/images/solo_camping.jpg",
+    "caption": "A little escape from the noise. Open skies, fresh mountain air, and a campsite far from the crowd. ⛺🌲 Would you camp here? Follow @wanderbyte.exe for more outdoor escapes!",
+    "hashtags": [
+      "WanderbyteExe",
+      "SoloCamping",
+      "CampingIndia",
+      "MountainCamping",
+      "OutdoorAdventure",
+      "NatureEscape",
+      "CampLife"
+    ],
+    "alt_text": "Travel, nature, mountain landscapes, camping, and outdoor adventures in India.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-roadtrip-001",
+    "slot": "18:30",
+    "image": "assets/images/scooter_roadtrip.jpg",
+    "caption": "No rush. No fixed destination. Just winding roads, mountain air, and another reason to keep exploring. 🛵🏔️ Save this for your next road trip! Follow @wanderbyte.exe for more journeys.",
+    "hashtags": [
+      "WanderbyteExe",
+      "ScooterTouring",
+      "RoadTripIndia",
+      "MountainRoads",
+      "TravelReels",
+      "AdventureTravel",
+      "RideAndExplore"
+    ],
+    "alt_text": "Travel, nature, mountain landscapes, camping, and outdoor adventures in India.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-winter-travel-001",
+    "slot": "21:00",
+    "image": "assets/images/winter_mountain_escape.jpg",
+    "caption": "Somewhere between snowy mountains and a sky full of stars, life feels a little simpler. 🌌❄️ Tag someone you'd take on a winter adventure! Follow @wanderbyte.exe for more travel inspiration.",
+    "hashtags": [
+      "WanderbyteExe",
+      "WinterTravel",
+      "SnowLovers",
+      "HimachalPradesh",
+      "MountainEscape",
+      "Stargazing",
+      "WanderlustIndia"
+    ],
+    "alt_text": "Travel, nature, mountain landscapes, camping, and outdoor adventures in India.",
     "enabled": true
   }
 ]
