@@ -1,13 +1,17 @@
+
 name: Instagram photo publisher
 
 on:
   schedule:
-    # 08:00 IST = 02:30 UTC
-    - cron: "30 2 * * *"
+    # 09:00 IST = 03:30 UTC
+    - cron: "30 3 * * *"
     # 13:00 IST = 07:30 UTC
     - cron: "30 7 * * *"
-    # 20:00 IST = 14:30 UTC
-    - cron: "30 14 * * *"
+    # 18:30 IST = 13:00 UTC
+    - cron: "0 13 * * *"
+    # 21:00 IST = 15:30 UTC
+    - cron: "30 15 * * *"
+
   workflow_dispatch:
     inputs:
       slot:
@@ -15,9 +19,10 @@ on:
         required: true
         type: choice
         options:
-          - "08:00"
+          - "09:00"
           - "13:00"
-          - "20:00"
+          - "18:30"
+          - "21:00"
       dry_run:
         description: "Validate only; do not publish"
         required: true
@@ -41,6 +46,7 @@ jobs:
       GRAPH_API_VERSION: ${{ secrets.GRAPH_API_VERSION }}
       PUBLIC_IMAGE_BASE_URL: ${{ vars.PUBLIC_IMAGE_BASE_URL }}
       GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
