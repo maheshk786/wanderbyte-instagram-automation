@@ -105,7 +105,7 @@ jobs:
               if not encoded:
                   raise SystemExit(f"No image bytes returned for {theme['file']}")
               image_bytes = base64.b64decode(encoded)
-              if not image_bytes.startswith(b"\\xff\\xd8\\xff"):
+              if not image_bytes.startswith(b"\xff\xd8\xff"):
                   raise SystemExit(f"Generated file is not a JPEG: {theme['file']}")
               (image_dir / theme["file"]).write_bytes(image_bytes)
               new_posts.append({
@@ -121,7 +121,7 @@ jobs:
           # Put today's entries first so publish.py selects the newest post for each slot.
           existing_ids = {p.get("id") for p in old_posts}
           new_posts = [p for p in new_posts if p["id"] not in existing_ids]
-          queue_path.write_text(json.dumps(new_posts + old_posts, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          queue_path.write_text(json.dumps(new_posts + old_posts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
           # Basic structural checks before committing.
           check = json.loads(queue_path.read_text(encoding="utf-8"))
@@ -130,7 +130,7 @@ jobs:
               raise SystemExit("Queue validation failed: expected exactly four new entries across all slots.")
           for post in today_posts:
               path = repo / post["image"]
-              if not path.is_file() or path.read_bytes()[:3] != b"\\xff\\xd8\\xff":
+              if not path.is_file() or path.read_bytes()[:3] != b"\xff\xd8\xff":
                   raise SystemExit(f"Image validation failed: {post['image']}")
           print(f"Generated and validated {len(today_posts)} JPG images for {today}.")
           PY
