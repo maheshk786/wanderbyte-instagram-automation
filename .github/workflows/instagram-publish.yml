@@ -1,0 +1,83 @@
+name: Instagram photo publisher
+
+on:
+  schedule:
+    # 08:00 IST = 02:30 UTC
+    - cron: "30 2 * * *"
+    # 13:00 IST = 07:30 UTC
+    - cron: "30 7 * * *"
+    # 20:00 IST = 14:30 UTC
+    - cron: "30 14 * * *"
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "Which IST slot to publish"
+        required: true
+        type: choice
+        options:
+          - "08:00"
+          - "13:00"
+          - "20:00"
+      dry_run:
+        description: "Validate only; do not publish"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instagram-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      GRAPH_API_VERSION: ${{ secrets.GRAPH_API_VERSION }}
+      PUBLIC_IMAGE_BASE_URL: ${{ vars.PUBLIC_IMAGE_BASE_URL }}
+      GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate queued post (manual dry run)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: python publish.py --slot "${{ inputs.slot }}" --dry-run
+
+      - name: Publish scheduled or manually approved post
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run) }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python publish.py --slot "${{ inputs.slot }}"
+          else
+            python publish.py
+          fi
+
+      - name: Commit publication state
+        if: ${{ success() && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run)) }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/published.json
+          if git diff --cached --quiet; then
+            echo "No publication state changes to commit."
+          else
+            git commit -m "Record Instagram publication state [skip ci]"
+            git push
+          fi

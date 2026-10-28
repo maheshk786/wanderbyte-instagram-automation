@@ -1,0 +1,50 @@
+[
+  {
+    "id": "morning-forest-001",
+    "slot": "08:00",
+    "image": "assets/images/morning-forest-001.jpg",
+    "caption": "A quieter morning, a slower walk, and a little more room to breathe. 🌿",
+    "hashtags": [
+      "wanderbyteexe",
+      "NaturePhotography",
+      "MorningWalk",
+      "NatureLovers",
+      "SlowTravel",
+      "IndiaTravel"
+    ],
+    "alt_text": "A peaceful green forest trail in soft morning light.",
+    "enabled": true
+  },
+  {
+    "id": "afternoon-trail-001",
+    "slot": "13:00",
+    "image": "assets/images/afternoon-trail-001.jpg",
+    "caption": "Somewhere between the trail and the trees, the day feels lighter. 🌲",
+    "hashtags": [
+      "wanderbyteexe",
+      "TrailViews",
+      "NaturePhotography",
+      "OutdoorLife",
+      "ExploreIndia",
+      "GetOutside"
+    ],
+    "alt_text": "A scenic walking trail surrounded by trees.",
+    "enabled": true
+  },
+  {
+    "id": "evening-camp-001",
+    "slot": "20:00",
+    "image": "assets/images/evening-camp-001.jpg",
+    "caption": "A simple setup, open skies, and the kind of evening you wish could last longer. ⛺",
+    "hashtags": [
+      "wanderbyteexe",
+      "SoloCamping",
+      "CampingLife",
+      "ScooterTouring",
+      "OutdoorAdventure",
+      "TravelIndia"
+    ],
+    "alt_text": "A small solo camping setup beneath an evening sky.",
+    "enabled": true
+  }
+]
