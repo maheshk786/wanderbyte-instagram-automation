@@ -1,50 +1,15 @@
 [
   {
-    "id": "morning-forest-001",
+    "id": "wanderbyte-test-001",
     "slot": "08:00",
-    "image": "assets/images/morning-forest-001.jpg",
-    "caption": "A quieter morning, a slower walk, and a little more room to breathe. 🌿",
+    "image": "assets/images/Wanderbyte1.jpg",
+    "caption": "A little test post from Wanderbyte. 🌿",
     "hashtags": [
-      "wanderbyteexe",
+      "WanderbyteExe",
       "NaturePhotography",
-      "MorningWalk",
-      "NatureLovers",
-      "SlowTravel",
-      "IndiaTravel"
+      "ExploreIndia"
     ],
-    "alt_text": "A peaceful green forest trail in soft morning light.",
-    "enabled": true
-  },
-  {
-    "id": "afternoon-trail-001",
-    "slot": "13:00",
-    "image": "assets/images/afternoon-trail-001.jpg",
-    "caption": "Somewhere between the trail and the trees, the day feels lighter. 🌲",
-    "hashtags": [
-      "wanderbyteexe",
-      "TrailViews",
-      "NaturePhotography",
-      "OutdoorLife",
-      "ExploreIndia",
-      "GetOutside"
-    ],
-    "alt_text": "A scenic walking trail surrounded by trees.",
-    "enabled": true
-  },
-  {
-    "id": "evening-camp-001",
-    "slot": "20:00",
-    "image": "assets/images/evening-camp-001.jpg",
-    "caption": "A simple setup, open skies, and the kind of evening you wish could last longer. ⛺",
-    "hashtags": [
-      "wanderbyteexe",
-      "SoloCamping",
-      "CampingLife",
-      "ScooterTouring",
-      "OutdoorAdventure",
-      "TravelIndia"
-    ],
-    "alt_text": "A small solo camping setup beneath an evening sky.",
+    "alt_text": "Test image for the Wanderbyte Instagram publishing workflow.",
     "enabled": true
   }
 ]
