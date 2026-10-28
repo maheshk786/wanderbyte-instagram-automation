@@ -40,6 +40,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
     env:
       IG_USER_ID: ${{ secrets.IG_USER_ID }}
       IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
@@ -69,6 +70,15 @@ jobs:
       - name: Publish scheduled or manually approved post
         if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run) }}
         run: |
+          IST_DATE=$(TZ=Asia/Kolkata date +%F)
+          START_DATE="2026-10-29"
+
+          if [[ "$IST_DATE" < "$START_DATE" ]]; then
+            echo "Publishing starts on $START_DATE IST."
+            echo "Skipping publication before the start date."
+            exit 0
+          fi
+
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             python publish.py --slot "${{ inputs.slot }}"
           else
