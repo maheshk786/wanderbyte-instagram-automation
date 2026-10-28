@@ -1,0 +1,173 @@
+name: Generate daily Instagram images and queue
+
+on:
+  schedule:
+    # 06:00 IST daily, before the first publishing slot
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instagram-content-generation
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      PUBLIC_IMAGE_BASE_URL: ${{ vars.PUBLIC_IMAGE_BASE_URL }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate four JPG images and update queue
+        run: |
+          python - <<'PY'
+          import base64, json, os, urllib.request, urllib.error
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          api_key = os.environ.get("OPENAI_API_KEY", "")
+          if not api_key:
+              raise SystemExit("Missing OPENAI_API_KEY repository secret. Add it in Settings > Secrets and variables > Actions.")
+
+          repo = Path(".")
+          image_dir = repo / "assets" / "images"
+          image_dir.mkdir(parents=True, exist_ok=True)
+          queue_path = repo / "content" / "queue.json"
+          queue_path.parent.mkdir(parents=True, exist_ok=True)
+          old_posts = json.loads(queue_path.read_text(encoding="utf-8")) if queue_path.exists() else []
+
+          today = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d")
+          themes = [
+              {
+                  "slot": "09:00", "slug": "snow-mountains", "file": "snow_mountains.jpg",
+                  "prompt": "Photorealistic premium travel photography of dramatic snow-covered Himalayan peaks at golden sunrise, warm light on ridges, crisp foreground snow, natural colors, no text, no logos, vertical-friendly square composition.",
+                  "caption": "Chasing snowy peaks and quieter roads. 🏔️❄️ Where would you watch the sunrise? Follow @wanderbyte.exe for more travel adventures!",
+                  "hashtags": ["WanderbyteExe","SnowMountains","Himalayas","NaturePhotography","MountainViews","ExploreIndia","TravelIndia"],
+                  "alt": "Snow-covered Himalayan mountain peaks glowing in golden sunrise light."
+              },
+              {
+                  "slot": "13:00", "slug": "solo-camping", "file": "solo_camping.jpg",
+                  "prompt": "Photorealistic outdoor travel photograph of a solo camping setup with a warm-colored tent beside a clear alpine lake, pine trees, distant Himalayan mountains, daylight, inviting and realistic, no text, no logos, square composition.",
+                  "caption": "A little escape from the noise. Open skies, fresh mountain air, and a quiet campsite. ⛺🌲 Would you camp here? Follow @wanderbyte.exe for more outdoor escapes!",
+                  "hashtags": ["WanderbyteExe","SoloCamping","CampingIndia","MountainCamping","OutdoorAdventure","NatureEscape","CampLife"],
+                  "alt": "A solo camping tent beside an alpine lake with pine forest and mountains."
+              },
+              {
+                  "slot": "18:30", "slug": "scooter-roadtrip", "file": "scooter_roadtrip.jpg",
+                  "prompt": "Photorealistic cinematic travel photo of a grey Honda Dio-style scooter parked safely at a scenic Himalayan mountain road viewpoint at sunset, scooter fully visible, winding road and layered mountains, no brand logos or text, square composition.",
+                  "caption": "No rush. No fixed destination. Just winding roads and another reason to keep exploring. 🛵🏔️ Save this for your next road trip! Follow @wanderbyte.exe for more journeys.",
+                  "hashtags": ["WanderbyteExe","ScooterTouring","RoadTripIndia","MountainRoads","AdventureTravel","RideAndExplore","TravelIndia"],
+                  "alt": "A grey touring scooter parked at a scenic mountain-road viewpoint at sunset."
+              },
+              {
+                  "slot": "21:00", "slug": "winter-travel", "file": "winter_mountain_escape.jpg",
+                  "prompt": "Photorealistic cinematic winter travel photograph of a cozy Himalayan village glowing with warm lights beneath snowy mountains at blue hour, peaceful winter atmosphere, realistic snow and detail, no text, no logos, square composition.",
+                  "caption": "Cold mountain air, warm lights, and memories worth keeping. 🌌❄️ Tag someone you'd take on a winter adventure! Follow @wanderbyte.exe for more travel inspiration.",
+                  "hashtags": ["WanderbyteExe","WinterTravel","SnowLovers","HimachalPradesh","MountainEscape","WinterPhotography","WanderlustIndia"],
+                  "alt": "A warmly lit Himalayan village beneath snow-covered mountains on a winter evening."
+              }
+          ]
+
+          new_posts = []
+          for theme in themes:
+              payload = json.dumps({
+                  "model": "gpt-image-1",
+                  "prompt": theme["prompt"],
+                  "size": "1024x1024",
+                  "quality": "medium",
+                  "output_format": "jpeg"
+              }).encode("utf-8")
+              req = urllib.request.Request(
+                  "https://api.openai.com/v1/images/generations",
+                  data=payload,
+                  headers={"Authorization": "Bearer " + api_key, "Content-Type": "application/json"},
+                  method="POST"
+              )
+              try:
+                  with urllib.request.urlopen(req, timeout=240) as response:
+                      result = json.loads(response.read().decode("utf-8"))
+              except urllib.error.HTTPError as exc:
+                  detail = exc.read().decode("utf-8", "replace")[:1200]
+                  raise SystemExit(f"Image generation failed for {theme['file']} (HTTP {exc.code}): {detail}")
+              encoded = result.get("data", [{}])[0].get("b64_json")
+              if not encoded:
+                  raise SystemExit(f"No image bytes returned for {theme['file']}")
+              image_bytes = base64.b64decode(encoded)
+              if not image_bytes.startswith(b"\\xff\\xd8\\xff"):
+                  raise SystemExit(f"Generated file is not a JPEG: {theme['file']}")
+              (image_dir / theme["file"]).write_bytes(image_bytes)
+              new_posts.append({
+                  "id": f"wanderbyte-{theme['slug']}-{today}",
+                  "slot": theme["slot"],
+                  "image": f"assets/images/{theme['file']}",
+                  "caption": theme["caption"],
+                  "hashtags": theme["hashtags"],
+                  "alt_text": theme["alt"],
+                  "enabled": True
+              })
+
+          # Put today's entries first so publish.py selects the newest post for each slot.
+          existing_ids = {p.get("id") for p in old_posts}
+          new_posts = [p for p in new_posts if p["id"] not in existing_ids]
+          queue_path.write_text(json.dumps(new_posts + old_posts, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+
+          # Basic structural checks before committing.
+          check = json.loads(queue_path.read_text(encoding="utf-8"))
+          today_posts = [p for p in check if p.get("id", "").endswith(today)]
+          if len(today_posts) != 4 or {p["slot"] for p in today_posts} != {"09:00","13:00","18:30","21:00"}:
+              raise SystemExit("Queue validation failed: expected exactly four new entries across all slots.")
+          for post in today_posts:
+              path = repo / post["image"]
+              if not path.is_file() or path.read_bytes()[:3] != b"\\xff\\xd8\\xff":
+                  raise SystemExit(f"Image validation failed: {post['image']}")
+          print(f"Generated and validated {len(today_posts)} JPG images for {today}.")
+          PY
+
+      - name: Commit images and queue
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/images/snow_mountains.jpg assets/images/solo_camping.jpg assets/images/scooter_roadtrip.jpg assets/images/winter_mountain_escape.jpg content/queue.json
+          git commit -m "Generate daily Instagram images and queue"
+          git push
+
+      - name: Verify public image URLs
+        env:
+          BASE_URL: ${{ vars.PUBLIC_IMAGE_BASE_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BASE_URL:-}" ]; then
+            echo "Missing repository variable PUBLIC_IMAGE_BASE_URL."
+            exit 1
+          fi
+          for name in snow_mountains.jpg solo_camping.jpg scooter_roadtrip.jpg winter_mountain_escape.jpg; do
+            url="${BASE_URL%/}/assets/images/$name"
+            echo "Checking $url"
+            ok=0
+            for attempt in $(seq 1 12); do
+              status=$(curl -L -sS -o /tmp/image.jpg -w "%{http_code}" "$url" || true)
+              content_type=$(file --mime-type -b /tmp/image.jpg 2>/dev/null || true)
+              if [ "$status" = "200" ] && [ "$content_type" = "image/jpeg" ]; then
+                echo "OK: $name is publicly accessible as JPEG."
+                ok=1
+                break
+              fi
+              sleep 10
+            done
+            if [ "$ok" -ne 1 ]; then
+              echo "Public URL verification failed for $url (last status: $status, type: $content_type)"
+              exit 1
+            fi
+          done
