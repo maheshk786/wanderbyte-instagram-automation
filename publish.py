@@ -1,10 +1,13 @@
+
 #!/usr/bin/env python3
-"""Publish one queued single-image post to Instagram via the Graph API."""
+"""Publish one queued JPEG image using Instagram Login."""
+
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from datetime import datetime
@@ -17,13 +20,17 @@ import requests
 ROOT = Path(__file__).resolve().parent
 QUEUE_PATH = ROOT / "content" / "queue.json"
 STATE_PATH = ROOT / "state" / "published.json"
+
 IST = ZoneInfo("Asia/Kolkata")
+HTTP_TIMEOUT = 30
+
 SCHEDULE_TO_SLOT = {
     "30 2 * * *": "08:00",
     "30 7 * * *": "13:00",
     "30 14 * * *": "20:00",
 }
-HTTP_TIMEOUT = 30
+
+SLOTS = {"08:00", "13:00", "20:00"}
 
 
 class PublishError(RuntimeError):
@@ -33,230 +40,412 @@ class PublishError(RuntimeError):
 def load_json(path: Path, default):
     if not path.exists():
         return default
-    with path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+
+    with path.open("r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 def save_json(path: Path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with tmp.open("w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-        f.write("\n")
-    tmp.replace(path)
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+
+    with temporary_path.open("w", encoding="utf-8") as file:
+        json.dump(data, file, indent=2, ensure_ascii=False)
+        file.write("\n")
+
+    temporary_path.replace(path)
 
 
 def resolve_slot(args) -> str:
-    if args.slot:
-        slot = args.slot
-    else:
-        schedule = os.getenv("GITHUB_EVENT_SCHEDULE", "")
-        slot = SCHEDULE_TO_SLOT.get(schedule, "")
-    if slot not in {"08:00", "13:00", "20:00"}:
+    slot = args.slot
+
+    if not slot:
+        scheduled_time = os.getenv("GITHUB_EVENT_SCHEDULE", "")
+        slot = SCHEDULE_TO_SLOT.get(scheduled_time, "")
+
+    if slot not in SLOTS:
         raise PublishError(
-            "Could not determine slot. Use workflow_dispatch with slot 08:00, 13:00, or 20:00."
+            "Could not determine posting slot. "
+            "Choose 08:00, 13:00, or 20:00 IST."
         )
+
     return slot
 
 
 def build_image_url(base_url: str, image_path: str) -> str:
     if not base_url:
-        raise PublishError("PUBLIC_IMAGE_BASE_URL is not set.")
+        raise PublishError(
+            "PUBLIC_IMAGE_BASE_URL is missing. Configure it in "
+            "GitHub repository Variables."
+        )
+
     parsed = urlparse(base_url)
+
     if parsed.scheme != "https" or not parsed.netloc:
-        raise PublishError("PUBLIC_IMAGE_BASE_URL must be an HTTPS URL.")
-    # Prevent queue paths from escaping the repository's public asset path.
-    relative = image_path.lstrip("/")
-    if ".." in Path(relative).parts:
-        raise PublishError(f"Unsafe image path in queue: {image_path}")
-    return base_url.rstrip("/") + "/" + relative
+        raise PublishError(
+            "PUBLIC_IMAGE_BASE_URL must be a public HTTPS URL."
+        )
+
+    relative_path = image_path.strip().lstrip("/")
+
+    if not relative_path or ".." in Path(relative_path).parts:
+        raise PublishError(f"Invalid image path: {image_path}")
+
+    if not relative_path.lower().endswith((".jpg", ".jpeg")):
+        raise PublishError(
+            f"Instagram image must be a JPEG: {image_path}"
+        )
+
+    return base_url.rstrip("/") + "/" + relative_path
 
 
 def verify_public_jpeg(image_url: str):
-    """Check that Meta can reach a public JPEG URL before attempting a publish."""
+    """Verify the image is publicly reachable and served as a JPEG."""
+
     try:
-        response = requests.head(image_url, allow_redirects=True, timeout=HTTP_TIMEOUT)
-        # Some hosts reject HEAD even though GET works; retry with a streamed GET.
-        if response.status_code in (403, 405, 501):
+        response = requests.get(
+            image_url,
+            allow_redirects=True,
+            stream=True,
+            timeout=HTTP_TIMEOUT,
+        )
+
+        try:
+            if not response.ok:
+                raise PublishError(
+                    "Public image check failed with HTTP "
+                    f"{response.status_code}. Check GitHub Pages and "
+                    f"the image path: {image_url}"
+                )
+
+            content_type = (
+                response.headers.get("Content-Type", "")
+                .split(";", 1)[0]
+                .strip()
+                .lower()
+            )
+
+            if content_type not in {"image/jpeg", "image/jpg"}:
+                raise PublishError(
+                    "The image URL must serve image/jpeg. "
+                    f"Server returned: {content_type or 'unknown'}"
+                )
+
+        finally:
             response.close()
-            response = requests.get(image_url, allow_redirects=True, stream=True, timeout=HTTP_TIMEOUT)
-        if not response.ok:
-            raise PublishError(f"Image URL check failed with HTTP {response.status_code}: {image_url}")
-        content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
-        if content_type and content_type not in {"image/jpeg", "image/jpg"}:
-            raise PublishError(f"Image URL must return JPEG content, got '{content_type}': {image_url}")
-        response.close()
+
     except requests.RequestException as exc:
-        raise PublishError(f"Could not verify public image URL: {exc}") from exc
+        raise PublishError(
+            f"Could not access the public image URL: {exc}"
+        ) from exc
 
 
-def choose_post(slot: str, queue: list, published_ids: set) -> dict | None:
+def choose_post(slot: str, queue: list, published_ids: set):
     for post in queue:
         if not isinstance(post, dict):
             continue
+
         if post.get("enabled", True) is not True:
             continue
+
         if post.get("slot") != slot:
             continue
+
         post_id = str(post.get("id", "")).strip()
-        if not post_id:
+
+        if not post_id or post_id in published_ids:
             continue
-        if post_id in published_ids:
-            continue
+
         if not post.get("image") or not post.get("caption"):
             continue
+
         return post
+
     return None
 
 
-def graph_request(method: str, url: str, token: str, **kwargs) -> dict:
-    # Keep the token in the POST body or Authorization header, never in printed URLs.
-    headers = kwargs.pop("headers", {})
-    headers["Authorization"] = f"Bearer {token}"
-    try:
-        response = requests.request(
-            method, url, headers=headers, timeout=HTTP_TIMEOUT, **kwargs
-        )
-    except requests.RequestException as exc:
-        raise PublishError(f"Network error contacting Meta Graph API: {exc}") from exc
+def build_caption(post: dict) -> str:
+    caption = str(post.get("caption", "")).strip()
 
-    try:
-        payload = response.json()
-    except ValueError:
-        payload = {"raw_response": response.text[:500]}
-
-    if not response.ok or "error" in payload:
-        error = payload.get("error", {})
-        message = error.get("message", "Unknown Graph API error")
-        code = error.get("code", "unknown")
-        raise PublishError(f"Graph API returned HTTP {response.status_code}, code {code}: {message}")
-    return payload
-
-
-def wait_until_ready(container_id: str, graph_base: str, token: str):
-    url = f"{graph_base}/{container_id}"
-    for attempt in range(6):
-        payload = graph_request(
-            "GET", url, token,
-            params={"fields": "status_code"},
-        )
-        status = payload.get("status_code")
-        if status in (None, "FINISHED", "PUBLISHED"):
-            return
-        if status == "ERROR":
-            raise PublishError(f"Instagram media container {container_id} entered ERROR state.")
-        if status == "EXPIRED":
-            raise PublishError(f"Instagram media container {container_id} expired before publishing.")
-        if status != "IN_PROGRESS":
-            raise PublishError(f"Unexpected media container status: {status}")
-        if attempt < 5:
-            time.sleep(5)
-    raise PublishError(f"Media container {container_id} did not finish processing in time.")
-
-
-def publish_post(post: dict, image_url: str, ig_user_id: str, token: str, graph_base: str) -> str:
     hashtags = []
     for tag in post.get("hashtags", []):
         tag = str(tag).strip().replace(" ", "")
         if tag:
             hashtags.append(tag if tag.startswith("#") else f"#{tag}")
-    caption = str(post["caption"]).strip()
-    if hashtags:
-        caption = caption + "\n\n" + " ".join(hashtags)
 
-    # Instagram's API fetches this public URL; local runner paths will not work.
-    parsed = urlparse(image_url)
-    if parsed.scheme != "https" or not parsed.netloc:
-        raise PublishError("Image URL must be publicly accessible over HTTPS.")
+    if hashtags:
+        caption += "\n\n" + " ".join(hashtags)
+
+    if len(caption) > 2200:
+        raise PublishError(
+            f"Caption is {len(caption)} characters; Instagram captions "
+            "must be no longer than 2,200 characters."
+        )
+
+    return caption
+
+
+def graph_request(
+    method: str,
+    url: str,
+    token: str,
+    **kwargs,
+) -> dict:
+    """Call Meta without placing the access token in the URL or logs."""
+
+    headers = kwargs.pop("headers", {})
+    headers["Authorization"] = f"Bearer {token}"
+
+    try:
+        response = requests.request(
+            method,
+            url,
+            headers=headers,
+            timeout=HTTP_TIMEOUT,
+            **kwargs,
+        )
+    except requests.RequestException as exc:
+        # Do not print request headers or credentials.
+        raise PublishError(
+            f"Network error contacting Instagram: {type(exc).__name__}"
+        ) from exc
+
+    try:
+        try:
+            payload = response.json()
+        except ValueError:
+            payload = {}
+
+        if not response.ok or "error" in payload:
+            error = payload.get("error", {})
+            message = error.get("message", "Unknown API error")
+            code = error.get("code", "unknown")
+
+            raise PublishError(
+                f"Instagram API HTTP {response.status_code}, "
+                f"code {code}: {message}"
+            )
+
+        return payload
+
+    finally:
+        response.close()
+
+
+def wait_until_ready(
+    container_id: str,
+    graph_base: str,
+    token: str,
+):
+    """Wait for Instagram to finish processing the media container."""
+
+    status_url = f"{graph_base}/{container_id}"
+
+    for attempt in range(12):
+        payload = graph_request(
+            "GET",
+            status_url,
+            token,
+            params={"fields": "status_code"},
+        )
+
+        status = payload.get("status_code")
+
+        if status in {"FINISHED", "PUBLISHED"}:
+            return
+
+        if status == "ERROR":
+            raise PublishError(
+                "Instagram reported an error processing the image."
+            )
+
+        if status == "EXPIRED":
+            raise PublishError(
+                "The Instagram media container expired."
+            )
+
+        if status not in {"IN_PROGRESS", None}:
+            raise PublishError(
+                f"Unexpected Instagram container status: {status}"
+            )
+
+        if attempt < 11:
+            time.sleep(5)
+
+    raise PublishError(
+        "Instagram did not finish processing the image in time."
+    )
+
+
+def publish_post(
+    post: dict,
+    image_url: str,
+    ig_user_id: str,
+    token: str,
+    graph_base: str,
+) -> str:
+    caption = build_caption(post)
 
     media_params = {
         "image_url": image_url,
         "caption": caption,
     }
+
     alt_text = str(post.get("alt_text", "")).strip()
     if alt_text:
         media_params["alt_text"] = alt_text
 
+    # Step 1: Create an Instagram media container.
     container = graph_request(
         "POST",
         f"{graph_base}/{ig_user_id}/media",
         token,
         data=media_params,
     )
+
     container_id = container.get("id")
     if not container_id:
-        raise PublishError("Meta did not return a media container ID.")
+        raise PublishError(
+            "Instagram did not return a media container ID."
+        )
 
+    print("Instagram media container created.")
+
+    # Step 2: Wait until Instagram finishes processing the image.
     wait_until_ready(container_id, graph_base, token)
 
+    # Step 3: Publish the container to the Instagram account.
     published = graph_request(
         "POST",
         f"{graph_base}/{ig_user_id}/media_publish",
         token,
         data={"creation_id": container_id},
     )
+
     media_id = published.get("id")
     if not media_id:
-        raise PublishError("Meta did not return a published media ID.")
+        raise PublishError(
+            "Instagram did not return a published media ID."
+        )
+
     return str(media_id)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--slot", choices=["08:00", "13:00", "20:00"])
-    parser.add_argument("--dry-run", action="store_true")
+    parser = argparse.ArgumentParser(
+        description="Publish one queued Instagram photo."
+    )
+    parser.add_argument(
+        "--slot",
+        choices=sorted(SLOTS),
+        help="Posting slot in India Standard Time.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate the queued post without publishing.",
+    )
     args = parser.parse_args()
 
     try:
         slot = resolve_slot(args)
+
         queue = load_json(QUEUE_PATH, [])
         state = load_json(STATE_PATH, {"published": []})
+
         if not isinstance(queue, list):
-            raise PublishError("content/queue.json must contain a JSON array.")
-        published_records = state.get("published", [])
+            raise PublishError(
+                "content/queue.json must contain a JSON array."
+            )
+
+        if not isinstance(state, dict):
+            raise PublishError("state/published.json must be a JSON object.")
+
+        published_records = state.setdefault("published", [])
+
         published_ids = {
-            str(item.get("post_id")) for item in published_records
+            str(item.get("post_id"))
+            for item in published_records
             if isinstance(item, dict) and item.get("post_id")
         }
+
         post = choose_post(slot, queue, published_ids)
+
         if not post:
-            print(f"No enabled, unpublished queue item for slot {slot}; skipping safely.")
+            print(
+                f"No enabled, unpublished post for {slot} IST. Skipping."
+            )
             return 0
 
-        image_url = build_image_url(os.getenv("PUBLIC_IMAGE_BASE_URL", ""), str(post["image"]))
-        print(f"Selected post ID: {post['id']}")
-        print(f"Slot (IST): {slot}")
-        verify_public_jpeg(image_url)
+        post_id = str(post["id"])
+        image_url = build_image_url(
+            os.getenv("PUBLIC_IMAGE_BASE_URL", ""),
+            str(post["image"]),
+        )
+
+        print(f"Selected post: {post_id}")
+        print(f"Posting slot: {slot} IST")
         print(f"Image URL: {image_url}")
-        print(f"Caption preview: {post['caption']}")
-        print(f"Hashtags: {' '.join('#' + str(t).lstrip('#').replace(' ', '') for t in post.get('hashtags', []))}")
+        print(f"Caption preview: {build_caption(post)}")
+
+        verify_public_jpeg(image_url)
+        print("Public JPEG URL verified.")
+
         if args.dry_run:
-            print("DRY RUN: no Instagram API call was made.")
+            print("DRY RUN successful. No Instagram post was published.")
             return 0
 
         ig_user_id = os.getenv("IG_USER_ID", "").strip()
         token = os.getenv("IG_ACCESS_TOKEN", "").strip()
         version = os.getenv("GRAPH_API_VERSION", "").strip()
-        if not ig_user_id or not token or not version:
-            raise PublishError("Set IG_USER_ID, IG_ACCESS_TOKEN, and GRAPH_API_VERSION in GitHub Actions secrets.")
-        graph_base = f"https://graph.facebook.com/{version}"
 
-        media_id = publish_post(post, image_url, ig_user_id, token, graph_base)
+        if not ig_user_id or not token or not version:
+            raise PublishError(
+                "Missing IG_USER_ID, IG_ACCESS_TOKEN, or "
+                "GRAPH_API_VERSION in GitHub Actions secrets."
+            )
+
+        # This is Instagram Login, so use graph.instagram.com.
+        if not re.fullmatch(r"v\d+\.0", version):
+            raise PublishError(
+                "GRAPH_API_VERSION must look like v26.0. "
+                "Use a currently supported version from Meta."
+            )
+
+        graph_base = f"https://graph.instagram.com/{version}"
+
+        media_id = publish_post(
+            post=post,
+            image_url=image_url,
+            ig_user_id=ig_user_id,
+            token=token,
+            graph_base=graph_base,
+        )
+
         record = {
-            "post_id": str(post["id"]),
+            "post_id": post_id,
             "media_id": media_id,
             "slot": slot,
-            "published_at_ist": datetime.now(IST).isoformat(timespec="seconds"),
+            "published_at_ist": datetime.now(IST).isoformat(
+                timespec="seconds"
+            ),
             "image": str(post["image"]),
         }
+
         published_records.append(record)
         state["published"] = published_records
         save_json(STATE_PATH, state)
-        print(f"Published successfully. Instagram media ID: {media_id}")
-        print(f"Saved publication state for post ID: {post['id']}")
+
+        print(f"Published successfully. Media ID: {media_id}")
+        print(f"Recorded publication state for {post_id}.")
         return 0
 
-    except (PublishError, OSError, json.JSONDecodeError, requests.RequestException) as exc:
+    except (
+        PublishError,
+        OSError,
+        ValueError,
+        requests.RequestException,
+    ) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
