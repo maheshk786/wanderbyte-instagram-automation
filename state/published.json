@@ -13,6 +13,13 @@
       "slot": "21:00",
       "published_at_ist": "2026-10-29T01:58:09+05:30",
       "image": "assets/images/winter_mountain_escape.jpg"
+    },
+    {
+      "post_id": "wanderbyte-snow-mountains-001",
+      "media_id": "18145363429608388",
+      "slot": "09:00",
+      "published_at_ist": "2026-10-29T15:46:18+05:30",
+      "image": "assets/images/snow_mountains.jpg"
     }
   ]
 }
