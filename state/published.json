@@ -20,6 +20,13 @@
       "slot": "09:00",
       "published_at_ist": "2026-10-29T15:46:18+05:30",
       "image": "assets/images/snow_mountains.jpg"
+    },
+    {
+      "post_id": "wanderbyte-camping-001",
+      "media_id": "18415353535081082",
+      "slot": "13:00",
+      "published_at_ist": "2026-10-29T20:02:26+05:30",
+      "image": "assets/images/solo_camping.jpg"
     }
   ]
 }
