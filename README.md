@@ -4,7 +4,7 @@ A low-cost, scheduled Instagram single-photo publisher using Python, GitHub Acti
 
 ## What is automated
 
-- Runs daily at 08:00, 13:00, and 20:00 India Standard Time (IST).
+- Runs Monday through Friday at 08:00, 13:00, and 19:00 IST, and Saturday and Sunday at 10:00 and 18:00 IST.
 - Selects the next unpublished queue item for the matching slot.
 - Publishes a JPEG image with caption, hashtags, and alt text.
 - Records published post IDs in `state/published.json` to reduce accidental duplicates.
@@ -104,14 +104,14 @@ GitHub Actions secrets are encrypted and can be referenced in workflows. Never p
 
 Edit `content/queue.json`. Each item needs:
 - `id`: unique ID, never reuse it.
-- `slot`: one of `08:00`, `13:00`, `20:00`.
+- `slot`: one of `08:00`, `13:00`, `19:00`, `10:00`, or `18:00`.
 - `image`: relative path under the repository root.
 - `caption`: caption text without hashtags.
 - `hashtags`: list of hashtags, with or without `#`.
 - `alt_text`: concise description for accessibility.
 - `enabled`: set to `true` to make it eligible.
 
-The included queue has one example item per slot, so it is a **one-day starter sample**, not 30 days of ready-made posts. Add at least 90 unique queue items and matching JPEGs for a 30-day backlog (30 items for each slot). The script picks the first enabled, unpublished item matching the slot. Keep a backlog of images for each slot. When a slot has no eligible item, the run safely skips instead of posting the wrong content.
+The included queue is a small starter sample, not a full backlog. Add unique queue items and matching JPEGs for every slot you want to fill. A 30-day backlog for this schedule requires up to 105 weekday posts and 40 weekend posts (145 total). The script picks the first enabled, unpublished item matching the slot. Keep a backlog of images for each slot. When a slot has no eligible item, the run safely skips instead of posting the wrong content.
 
 Example: use `assets/images/morning-forest.jpg` in the JSON and place that file at exactly that path.
 
@@ -128,9 +128,11 @@ Be honest about AI-generated scenes; don't caption a generated scene as a real t
 ## 6. Schedule
 
 The workflow uses UTC cron:
-- `30 2 * * *` = 08:00 IST
-- `30 7 * * *` = 13:00 IST
-- `30 14 * * *` = 20:00 IST
+- `30 2 * * 1-5` = weekdays at 08:00 IST
+- `30 7 * * 1-5` = weekdays at 13:00 IST
+- `30 13 * * 1-5` = weekdays at 19:00 IST
+- `30 4 * * 0,6` = weekends at 10:00 IST
+- `30 12 * * 0,6` = weekends at 18:00 IST
 
 GitHub scheduled workflows can be delayed during periods of high load and are not a guaranteed real-time scheduler. Scheduled runs execute from the default branch. Keep the workflow on `main` (or update the YAML if your default branch differs).
 
@@ -158,7 +160,7 @@ Potentially paid / not included:
 - Additional GitHub Actions usage beyond the plan's allowance.
 - Any Meta app review/business requirements that apply to your account; the API is not a guaranteed bypass for account restrictions.
 
-Three posts per day is about 90 posts in a 30-day month. The code does not bypass Instagram's policies or rate limits.
+This schedule has up to 145 posts in a 30-day month. The code does not bypass Instagram's policies or rate limits.
 
 ## Troubleshooting
 
