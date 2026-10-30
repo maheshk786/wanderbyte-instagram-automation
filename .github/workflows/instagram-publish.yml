@@ -3,14 +3,13 @@ name: Instagram photo publisher
 
 on:
   schedule:
-    # 09:00 IST = 03:30 UTC
-    - cron: "30 3 * * *"
-    # 13:00 IST = 07:30 UTC
-    - cron: "30 7 * * *"
-    # 18:30 IST = 13:00 UTC
-    - cron: "0 13 * * *"
-    # 21:00 IST = 15:30 UTC
-    - cron: "30 15 * * *"
+    # Weekdays: 08:00, 13:00, and 19:00 IST
+    - cron: "30 2 * * 1-5"
+    - cron: "30 7 * * 1-5"
+    - cron: "30 13 * * 1-5"
+    # Weekends: 10:00 and 18:00 IST
+    - cron: "30 4 * * 0,6"
+    - cron: "30 12 * * 0,6"
 
   workflow_dispatch:
     inputs:
@@ -19,10 +18,11 @@ on:
         required: true
         type: choice
         options:
-          - "09:00"
+          - "08:00"
           - "13:00"
-          - "18:30"
-          - "21:00"
+          - "19:00"
+          - "10:00"
+          - "18:00"
       dry_run:
         description: "Validate only; do not publish"
         required: true
