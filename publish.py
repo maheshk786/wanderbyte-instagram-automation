@@ -367,7 +367,7 @@ def publish_story(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Publish one queued Instagram photo."
+        description="Publish one queued Instagram photo to the feed and Story."
     )
     parser.add_argument(
         "--slot",
