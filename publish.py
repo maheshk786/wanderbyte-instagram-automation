@@ -442,29 +442,10 @@ def main() -> int:
 
         if not ig_user_id or not token or not version:
             raise PublishError(
-                "Missing IG_USER_ID, IG_ACCESS_TOKEN, or "
-                "GRAPH_API_VERSION in GitHub Actions secrets."
-            )
-
-        # This is Instagram Login, so use graph.instagram.com.
-        if not re.fullmatch(r"v\d+\.0", version):
-            raise PublishError(
-                "GRAPH_API_VERSION must look like v26.0. "
-                "Use a currently supported version from Meta."
-            )
-
-        graph_base = f"https://graph.instagram.com/{version}"
-
-        ig_user_id = os.getenv("IG_USER_ID", "").strip()
-        token = os.getenv("IG_ACCESS_TOKEN", "").strip()
-        version = os.getenv("GRAPH_API_VERSION", "").strip()
-
-        if not ig_user_id or not token or not version:
-            raise PublishError(
                 "Missing IG_USER_ID, IG_ACCESS_TOKEN, or GRAPH_API_VERSION in GitHub Actions secrets."
             )
 
-        if not re.fullmatch(r"v\\d+\\.0", version):
+        if not re.fullmatch(r"v\d+\.0", version):
             raise PublishError(
                 "GRAPH_API_VERSION must look like v26.0. Use a currently supported version from Meta."
             )
