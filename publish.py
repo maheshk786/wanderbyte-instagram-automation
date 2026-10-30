@@ -456,6 +456,11 @@ def main() -> int:
             return 0
 
         post_id = str(post["id"])
+        record = next(
+            (item for item in published_records
+             if isinstance(item, dict) and str(item.get("post_id")) == post_id),
+            None,
+        )
         image_url = build_image_url(
             os.getenv("PUBLIC_IMAGE_BASE_URL", ""),
             str(post["image"]),
@@ -466,8 +471,9 @@ def main() -> int:
         print(f"Image URL: {image_url}")
         print(f"Caption preview: {build_caption(post)}")
 
-        verify_public_jpeg(image_url)
-        print("Public JPEG URL verified.")
+        if not record or record.get("story_status") != "published":
+            verify_public_jpeg(image_url)
+            print("Public JPEG URL verified.")
 
         if args.dry_run:
             print("DRY RUN successful. No Instagram post was published.")
@@ -489,12 +495,6 @@ def main() -> int:
 
         # Feed and Story publishing use Instagram Graph API with Facebook Login.
         graph_base = f"https://graph.facebook.com/{version}"
-        record = next(
-            (item for item in published_records
-             if isinstance(item, dict) and str(item.get("post_id")) == post_id),
-            None,
-        )
-
         if record and record.get("media_id"):
             print(f"Feed post already published for {post_id}; retrying Story only.")
         else:
