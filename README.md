@@ -1,13 +1,13 @@
 # @wanderbyte.exe Instagram Automation
 
-A low-cost, scheduled Instagram single-photo publisher using Python, GitHub Actions, and the Instagram Graph API (Facebook Login flow).
+A low-cost, scheduled Instagram photo publisher that publishes each queued image to both the feed and Stories using Python, GitHub Actions, and the Instagram Graph API with Facebook Login.
 
 ## What is automated
 
 - Runs Monday through Friday at 08:00, 13:00, and 19:00 IST, and Saturday and Sunday at 10:00 and 18:00 IST.
 - Selects the next unpublished queue item for the matching slot.
-- Publishes a JPEG image with caption, hashtags, and alt text.
-- Records published post IDs in `state/published.json` to reduce accidental duplicates.
+- Publishes each queued JPEG to the Instagram feed with caption, hashtags, and alt text, then publishes the same JPEG to Stories.
+- Records feed and Story media IDs in `state/published.json`; if Story publishing fails after the feed post succeeds, the next run retries the Story without duplicating the feed post.
 - Supports manual test runs and manual publishing from the GitHub Actions tab.
 
 ## Important limitation: image generation
@@ -55,10 +55,10 @@ If you don't want your images and source files public, use a media host with pub
 
 ## 3. Configure Instagram and Meta
 
-This sample uses the **Instagram Graph API with Facebook Login**.
+This publisher uses the **Instagram Graph API with Facebook Login** for both feed and Story publishing. Stories require an Instagram Business account; Creator accounts are not eligible for Story publishing through this API.
 
 Prerequisites:
-- Instagram account is **Creator** or **Business**.
+- Instagram account is **Business**. Meta's Content Publishing API supports Stories only for Business accounts.
 - It is connected to a Facebook Page that you can administer.
 - Your Meta app has the Instagram Graph API / Instagram use case configured.
 - The app has the required permissions and a valid user access token. Publishing for accounts you don't own/manage may require App Review and Advanced Access.
@@ -77,7 +77,7 @@ Use Meta's Graph API Explorer or your app's OAuth flow to obtain a user access t
 
 `GET https://graph.facebook.com/v{API_VERSION}/me/accounts?fields=id,name,access_token,instagram_business_account`
 
-Find the Facebook Page connected to your Instagram account. The `instagram_business_account.id` value is the Instagram professional account ID used by this script. Follow Meta's current token-expiry and long-lived-token instructions; do not assume a short-lived token will keep working indefinitely.
+Find the Facebook Page connected to your Instagram account. Use the `instagram_business_account.id` value as `IG_USER_ID`. Use the connected Page's `access_token` value as `IG_ACCESS_TOKEN` (a Facebook Page access token, not an Instagram Login token). Follow Meta's current token-expiry and long-lived-token instructions; do not assume a short-lived token will keep working indefinitely.
 
 You can also inspect the Page/Instagram account relationship in Meta Business Suite. Never paste your access token into the repository, a source file, or a public issue.
 
