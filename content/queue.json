@@ -2,7 +2,7 @@
 [
   {
     "id": "wanderbyte-snow-mountains-001",
-    "slot": "08:00",
+    "slot": "19:00",
     "image": "assets/images/snow_mountains.jpg",
     "caption": "@Wanderbyte.Exe Chasing snowy peaks, quiet roads, and the freedom only the mountains can offer. 🏔️❄️ Every journey has a story. Follow @wanderbyte.exe for more travel adventures!",
     "hashtags": [
@@ -19,7 +19,7 @@
   },
   {
     "id": "wanderbyte-camping-001",
-    "slot": "13:00",
+    "slot": "19:00",
     "image": "assets/images/solo_camping.jpg",
     "caption": "@Wanderbyte.Exe A little escape from the noise. Open skies, fresh mountain air, and a campsite far from the crowd. ⛺🌲 Would you camp here? Follow @wanderbyte.exe for more outdoor escapes!",
     "hashtags": [
@@ -53,7 +53,7 @@
   },
   {
     "id": "wanderbyte-winter-travel-001",
-    "slot": "18:00",
+    "slot": "19:00",
     "image": "assets/images/winter_mountain_escape.jpg",
     "caption": "@Wanderbyte.Exe Somewhere between snowy mountains and a sky full of stars, life feels a little simpler. 🌌❄️ Tag someone you'd take on a winter adventure! Follow @wanderbyte.exe for more travel inspiration.",
     "hashtags": [
