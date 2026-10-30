@@ -1,7 +1,7 @@
 [
   {
     "id": "wanderbyte-spiti-snow-001",
-    "slot": "10:00",
+    "slot": "08:00",
     "image": "assets/images/spiti_snow_mountains.jpg",
     "caption": "An imagined winter morning in Spiti.\n\nThis AI-created scene is inspired by Spiti Valley, Himachal Pradesh, with snowy peaks above a quiet Himalayan valley.\n\nSave this for your next mountain getaway.",
     "hashtags": [
@@ -14,7 +14,7 @@
   },
   {
     "id": "wanderbyte-leh-snow-001",
-    "slot": "10:00",
+    "slot": "13:00",
     "image": "assets/images/leh_snow_mountains.jpg",
     "caption": "An imagined snowy day in Leh.\n\nThis AI-created winter scene is inspired by Leh, Ladakh, with the old town nestled beneath snow-covered Himalayan peaks.\n\nSave this view for your Ladakh trip.",
     "hashtags": [
@@ -27,7 +27,7 @@
   },
   {
     "id": "wanderbyte-himalayan-snow-001",
-    "slot": "08:00",
+    "slot": "19:00",
     "image": "assets/images/himalayan_snow_mountains.jpg",
     "caption": "A quiet escape beneath the snowy Himalayas.\n\nA frozen river winds through this AI-created winter mountain scene, with fresh snow covering the ridges.\n\nSave this for a day in the mountains.",
     "hashtags": [
