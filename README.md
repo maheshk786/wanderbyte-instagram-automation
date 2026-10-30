@@ -129,7 +129,12 @@ Be honest about AI-generated scenes; don't caption a generated scene as a real t
 
 ## 6. Schedule
 
-The workflow uses UTC cron:\n- `30 2 * * 1-5` = weekdays at 08:00 IST\n- `30 7 * * 1-5` = weekdays at 13:00 IST\n- `30 13 * * 1-5` = weekdays at 19:00 IST\n- `30 4 * * 0,6` = weekends at 10:00 IST\n- `30 12 * * 0,6` = weekends at 18:00 IST.
+The workflow uses UTC cron:
+- `30 2 * * 1-5` = weekdays at 08:00 IST
+- `30 7 * * 1-5` = weekdays at 13:00 IST
+- `30 13 * * 1-5` = weekdays at 19:00 IST
+- `30 4 * * 0,6` = weekends at 10:00 IST
+- `30 12 * * 0,6` = weekends at 18:00 IST.
 
 GitHub scheduled workflows can be delayed during periods of high load and are not a guaranteed real-time scheduler. Scheduled runs execute from the default branch. Keep the workflow on `main` (or update the YAML if your default branch differs).
 
