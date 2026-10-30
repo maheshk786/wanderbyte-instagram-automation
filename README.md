@@ -111,7 +111,7 @@ Edit `content/queue.json`. Each item needs:
 - `alt_text`: concise description for accessibility.
 - `enabled`: set to `true` to make it eligible.
 
-The included queue is a small starter sample, not a full backlog. Add unique queue items and matching JPEGs for every slot you want to fill. A 30-day backlog for this schedule requires up to 105 weekday posts and 40 weekend posts (145 total). The script picks the first enabled, unpublished item matching the slot. Keep a backlog of images for each slot. When a slot has no eligible item, the run safely skips instead of posting the wrong content.
+The included queue is a small starter sample, not a full backlog. Add unique queue items and matching JPEGs for every slot you want to fill. A 30-day backlog for this schedule requires about 81–82 posts, depending on which weekdays the month starts and ends with. The script picks the first enabled, unpublished item matching the slot. Keep a backlog of images for each slot. When a slot has no eligible item, the run safely skips instead of posting the wrong content.
 
 Example: use `assets/images/morning-forest.jpg` in the JSON and place that file at exactly that path.
 
@@ -160,7 +160,7 @@ Potentially paid / not included:
 - Additional GitHub Actions usage beyond the plan's allowance.
 - Any Meta app review/business requirements that apply to your account; the API is not a guaranteed bypass for account restrictions.
 
-This schedule has up to 145 posts in a 30-day month. The code does not bypass Instagram's policies or rate limits.
+This schedule has about 81–82 posts in a 30-day month. The code does not bypass Instagram's policies or rate limits.
 
 ## Troubleshooting
 
