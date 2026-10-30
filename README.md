@@ -7,7 +7,7 @@ A low-cost, scheduled Instagram photo publisher that publishes each queued image
 - Runs Monday through Friday at 08:00, 13:00, and 19:00 IST, and Saturday and Sunday at 10:00 and 18:00 IST.
 - Selects the next unpublished queue item for the matching slot.
 - Publishes each queued JPEG to the Instagram feed with caption, hashtags, and alt text, then publishes the same JPEG to Stories.
-- Records feed and Story media IDs in `state/published.json`; if Story publishing fails after the feed post succeeds, the next run retries the Story without duplicating the feed post.
+- Records feed and Story media IDs in `state/published.json`; if Story publishing fails after the feed post succeeds, a later run for that same slot retries the Story without duplicating the feed post.
 - Supports manual test runs and manual publishing from the GitHub Actions tab.
 
 ## Important limitation: image generation
@@ -61,7 +61,7 @@ Prerequisites:
 - Instagram account is **Business**. Meta's Content Publishing API supports Stories only for Business accounts.
 - It is connected to a Facebook Page that you can administer.
 - Your Meta app has the Instagram Graph API / Instagram use case configured.
-- The app has the required permissions and a valid user access token. Publishing for accounts you don't own/manage may require App Review and Advanced Access.
+- The app has the required permissions. Use a Facebook Page access token for publishing; generating it starts with a user access token. Publishing for accounts you don't own/manage may require App Review and Advanced Access.
 
 Typical permissions for this Facebook Login flow:
 - `instagram_basic`
