@@ -365,6 +365,39 @@ def publish_story(
     return str(media_id)
 
 
+
+def move_image_to_processed(image_path: str, post_id: str) -> str:
+    """Move a published JPEG into assets/images/Processed."""
+    source = (ROOT / image_path).resolve()
+    images_dir = (ROOT / "assets" / "images").resolve()
+    try:
+        source.relative_to(images_dir)
+    except ValueError as exc:
+        raise PublishError("Only files under assets/images can be moved to Processed.") from exc
+
+    if source.parent == (images_dir / "Processed"):
+        return source.relative_to(ROOT).as_posix()
+
+    processed_dir = images_dir / "Processed"
+    processed_dir.mkdir(parents=True, exist_ok=True)
+    destination = processed_dir / source.name
+
+    if destination.exists() and source.exists():
+        safe_post_id = re.sub(r"[^A-Za-z0-9._-]", "_", post_id)
+        destination = processed_dir / f"{source.stem}-{safe_post_id}{source.suffix}"
+
+    if destination.exists():
+        if source.exists():
+            raise PublishError(f"Processed image destination already exists: {destination.name}")
+        return destination.relative_to(ROOT).as_posix()
+
+    if not source.exists():
+        raise PublishError(f"Published image file is missing: {image_path}")
+
+    source.replace(destination)
+    return destination.relative_to(ROOT).as_posix()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Publish one queued Instagram photo to the feed and Story."
@@ -399,8 +432,11 @@ def main() -> int:
 
         # Older records predate Story publishing; don't retroactively publish them.
         for item in published_records:
-            if isinstance(item, dict) and item.get("media_id") and "story_status" not in item:
-                item["story_status"] = "legacy_no_story"
+            if isinstance(item, dict) and item.get("media_id"):
+                if "story_status" not in item:
+                    item["story_status"] = "legacy_no_story"
+                if "image_status" not in item:
+                    item["image_status"] = "legacy_not_moved"
 
         published_ids = {
             str(item.get("post_id"))
@@ -408,6 +444,7 @@ def main() -> int:
             if isinstance(item, dict)
             and item.get("post_id")
             and item.get("story_status") in {"published", "legacy_no_story"}
+            and item.get("image_status") in {"moved", "legacy_not_moved"}
         }
 
         post = choose_post(slot, queue, published_ids)
@@ -475,6 +512,7 @@ def main() -> int:
                 "published_at_ist": datetime.now(IST).isoformat(timespec="seconds"),
                 "image": str(post["image"]),
                 "story_status": "pending",
+                "image_status": "pending",
             }
             published_records.append(record)
             state["published"] = published_records
@@ -482,20 +520,29 @@ def main() -> int:
             print(f"Feed post published. Media ID: {media_id}")
             print("Saved feed publication state before publishing the Story.")
 
-        story_media_id = publish_story(
-            image_url=image_url,
-            ig_user_id=ig_user_id,
-            token=token,
-            graph_base=graph_base,
-        )
-        record["story_media_id"] = story_media_id
-        record["story_status"] = "published"
-        record["story_published_at_ist"] = datetime.now(IST).isoformat(timespec="seconds")
-        state["published"] = published_records
-        save_json(STATE_PATH, state)
+        if record.get("story_status") != "published":
+            story_media_id = publish_story(
+                image_url=image_url,
+                ig_user_id=ig_user_id,
+                token=token,
+                graph_base=graph_base,
+            )
+            record["story_media_id"] = story_media_id
+            record["story_status"] = "published"
+            record["story_published_at_ist"] = datetime.now(IST).isoformat(timespec="seconds")
+            state["published"] = published_records
+            save_json(STATE_PATH, state)
+            print(f"Story published successfully. Media ID: {story_media_id}")
 
-        print(f"Story published successfully. Media ID: {story_media_id}")
-        print(f"Recorded feed and Story publication state for {post_id}.")
+        if record.get("image_status") != "moved":
+            processed_image = move_image_to_processed(str(post["image"]), post_id)
+            record["processed_image"] = processed_image
+            record["image_status"] = "moved"
+            state["published"] = published_records
+            save_json(STATE_PATH, state)
+            print(f"Moved published image to {processed_image}.")
+
+        print(f"Recorded feed, Story, and image processing state for {post_id}.")
         return 0
 
 
