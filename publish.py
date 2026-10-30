@@ -25,14 +25,10 @@ IST = ZoneInfo("Asia/Kolkata")
 HTTP_TIMEOUT = 30
 
 SCHEDULE_TO_SLOT = {
-    "30 2 * * 1-5": "08:00",
-    "30 7 * * 1-5": "13:00",
-    "30 13 * * 1-5": "19:00",
-    "30 4 * * 0,6": "10:00",
-    "30 12 * * 0,6": "18:00",
+    "30 13 * * *": "19:00",
 }
 
-SLOTS = {"08:00", "13:00", "19:00", "10:00", "18:00"}
+SLOTS = {"19:00"}
 
 
 class PublishError(RuntimeError):
@@ -68,7 +64,7 @@ def resolve_slot(args) -> str:
     if slot not in SLOTS:
         raise PublishError(
             "Could not determine posting slot. "
-            "Choose 08:00, 13:00, or 19:00 IST on weekdays; 10:00 or 18:00 IST on weekends."
+            "Choose 19:00 IST."
         )
 
     return slot
@@ -334,38 +330,6 @@ def publish_post(
 
 
 
-def publish_story(
-    image_url: str,
-    ig_user_id: str,
-    token: str,
-    graph_base: str,
-) -> str:
-    """Publish the same public JPEG as an Instagram Story."""
-    container = graph_request(
-        "POST",
-        f"{graph_base}/{ig_user_id}/media",
-        token,
-        data={"image_url": image_url, "media_type": "STORIES"},
-    )
-    container_id = container.get("id")
-    if not container_id:
-        raise PublishError("Instagram did not return a Story container ID.")
-
-    print("Instagram Story container created.")
-    wait_until_ready(container_id, graph_base, token)
-    published = graph_request(
-        "POST",
-        f"{graph_base}/{ig_user_id}/media_publish",
-        token,
-        data={"creation_id": container_id},
-    )
-    media_id = published.get("id")
-    if not media_id:
-        raise PublishError("Instagram did not return a published Story media ID.")
-    return str(media_id)
-
-
-
 def move_image_to_processed(image_path: str, post_id: str) -> str:
     """Move a published JPEG into assets/images/Processed."""
     source = (ROOT / image_path).resolve()
@@ -400,7 +364,7 @@ def move_image_to_processed(image_path: str, post_id: str) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Publish one queued Instagram photo to the feed and Story."
+        description="Publish one queued Instagram photo to the feed."
     )
     parser.add_argument(
         "--slot",
@@ -430,20 +394,16 @@ def main() -> int:
 
         published_records = state.setdefault("published", [])
 
-        # Older records predate Story publishing; don't retroactively publish them.
+        # Older feed-only records are complete; don't retroactively move their images.
         for item in published_records:
-            if isinstance(item, dict) and item.get("media_id"):
-                if "story_status" not in item:
-                    item["story_status"] = "legacy_no_story"
-                if "image_status" not in item:
-                    item["image_status"] = "legacy_not_moved"
+            if isinstance(item, dict) and item.get("media_id") and "image_status" not in item:
+                item["image_status"] = "legacy_not_moved"
 
         published_ids = {
             str(item.get("post_id"))
             for item in published_records
             if isinstance(item, dict)
             and item.get("post_id")
-            and item.get("story_status") in {"published", "legacy_no_story"}
             and item.get("image_status") in {"moved", "legacy_not_moved"}
         }
 
@@ -471,7 +431,7 @@ def main() -> int:
         print(f"Image URL: {image_url}")
         print(f"Caption preview: {build_caption(post)}")
 
-        if not record or record.get("story_status") != "published":
+        if not record or not record.get("media_id"):
             verify_public_jpeg(image_url)
             print("Public JPEG URL verified.")
 
@@ -493,10 +453,10 @@ def main() -> int:
                 "GRAPH_API_VERSION must look like v26.0. Use a currently supported version from Meta."
             )
 
-        # Feed and Story publishing use Instagram Graph API with Facebook Login.
+        # Feed publishing uses Instagram Graph API with Facebook Login.
         graph_base = f"https://graph.facebook.com/{version}"
         if record and record.get("media_id"):
-            print(f"Feed post already published for {post_id}; retrying Story only.")
+            print(f"Feed post already published for {post_id}; retrying image processing only.")
         else:
             media_id = publish_post(
                 post=post,
@@ -511,28 +471,13 @@ def main() -> int:
                 "slot": slot,
                 "published_at_ist": datetime.now(IST).isoformat(timespec="seconds"),
                 "image": str(post["image"]),
-                "story_status": "pending",
                 "image_status": "pending",
             }
             published_records.append(record)
             state["published"] = published_records
             save_json(STATE_PATH, state)
             print(f"Feed post published. Media ID: {media_id}")
-            print("Saved feed publication state before publishing the Story.")
-
-        if record.get("story_status") != "published":
-            story_media_id = publish_story(
-                image_url=image_url,
-                ig_user_id=ig_user_id,
-                token=token,
-                graph_base=graph_base,
-            )
-            record["story_media_id"] = story_media_id
-            record["story_status"] = "published"
-            record["story_published_at_ist"] = datetime.now(IST).isoformat(timespec="seconds")
-            state["published"] = published_records
-            save_json(STATE_PATH, state)
-            print(f"Story published successfully. Media ID: {story_media_id}")
+            print("Saved publication state before moving the image.")
 
         if record.get("image_status") != "moved":
             processed_image = move_image_to_processed(str(post["image"]), post_id)
@@ -542,7 +487,7 @@ def main() -> int:
             save_json(STATE_PATH, state)
             print(f"Moved published image to {processed_image}.")
 
-        print(f"Recorded feed, Story, and image processing state for {post_id}.")
+        print(f"Recorded feed publication and image processing state for {post_id}.")
         return 0
 
 
