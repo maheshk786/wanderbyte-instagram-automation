@@ -61,7 +61,7 @@ jobs:
         if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.dry_run) }}
         run: |
           IST_DATE=$(TZ=Asia/Kolkata date +%F)
-          START_DATE="2026-10-29"
+          START_DATE="2026-10-31"
 
           if [[ "$IST_DATE" < "$START_DATE" ]]; then
             echo "Publishing starts on $START_DATE IST."

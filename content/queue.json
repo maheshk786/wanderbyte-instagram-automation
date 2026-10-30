@@ -1,4 +1,3 @@
-
 [
   {
     "id": "wanderbyte-snow-mountains-001",
@@ -66,6 +65,58 @@
       "WanderlustIndia"
     ],
     "alt_text": "Travel, nature, mountain landscapes, camping, and outdoor adventures in India.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-spiti-snow-001",
+    "slot": "19:00",
+    "image": "assets/images/spiti_snow_mountains.jpg",
+    "caption": "An imagined winter morning in Spiti.\n\nThis AI-created scene is inspired by Spiti Valley, Himachal Pradesh, with snowy peaks above a quiet Himalayan valley.\n\nSave this for your next mountain getaway.",
+    "hashtags": [
+      "SpitiValley",
+      "Himachal",
+      "HimalayanWinter"
+    ],
+    "alt_text": "A snowy Himalayan valley with a Buddhist monastery and steep mountain peaks.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-leh-snow-001",
+    "slot": "19:00",
+    "image": "assets/images/leh_snow_mountains.jpg",
+    "caption": "An imagined snowy day in Leh.\n\nThis AI-created winter scene is inspired by Leh, Ladakh, with the old town nestled beneath snow-covered Himalayan peaks.\n\nSave this view for your Ladakh trip.",
+    "hashtags": [
+      "Leh",
+      "Ladakh",
+      "Himalayas"
+    ],
+    "alt_text": "Snow covers Leh's old town and nearby buildings beneath a wide range of Himalayan peaks.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-himalayan-snow-001",
+    "slot": "19:00",
+    "image": "assets/images/himalayan_snow_mountains.jpg",
+    "caption": "A quiet escape beneath the snowy Himalayas.\n\nA frozen river winds through this AI-created winter mountain scene, with fresh snow covering the ridges.\n\nSave this for a day in the mountains.",
+    "hashtags": [
+      "Himalayas",
+      "SnowMountains",
+      "WinterTravel"
+    ],
+    "alt_text": "A frozen river winds through a snowy mountain valley below tall Himalayan peaks.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-himalayan-sunrise-001",
+    "slot": "19:00",
+    "image": "assets/images/himalayan_sunrise.jpg",
+    "caption": "The first light turns the snowy peaks gold.\n\nThis AI-created Himalayan sunrise catches the mountains just as morning arrives.\n\nSave this for a slower start tomorrow.",
+    "hashtags": [
+      "HimalayanSunrise",
+      "SnowPeaks",
+      "MountainViews"
+    ],
+    "alt_text": "Warm orange sunrise light touches the snow-covered peaks above blue-shadowed mountain slopes.",
     "enabled": true
   }
 ]
