@@ -8,6 +8,7 @@ A low-cost, scheduled Instagram photo publisher that publishes each queued image
 - Selects the next unpublished queue item for the matching slot.
 - Publishes each queued JPEG to the Instagram feed with caption, hashtags, and alt text, then publishes the same JPEG to Stories.
 - Records feed and Story media IDs in `state/published.json`; if Story publishing fails after the feed post succeeds, a later run for that same slot retries the Story without duplicating the feed post.
+- Moves the JPEG into `assets/images/Processed/` after both the feed post and Story publish successfully. Use a unique image file for each queue item; moved files are no longer at their original queue URL.
 - Supports manual test runs and manual publishing from the GitHub Actions tab.
 
 ## Important limitation: image generation
@@ -21,7 +22,8 @@ Automated AI image generation requires a separate image-generation API/service. 
 ```text
 .
 ├── .github/workflows/instagram-publish.yml
-├── assets/images/              # Public JPEGs served by GitHub Pages
+├── assets/images/              # Queued public JPEGs served by GitHub Pages
+│   └── Processed/               # JPEGs moved here after feed and Story publish
 ├── content/queue.json          # Captions, hashtags, image names, slot
 ├── state/published.json        # Automatically updated after publishing
 ├── publish.py
