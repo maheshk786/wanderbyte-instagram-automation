@@ -25,14 +25,12 @@ IST = ZoneInfo("Asia/Kolkata")
 HTTP_TIMEOUT = 30
 
 SCHEDULE_TO_SLOT = {
-    "30 2 * * 1-5": "08:00",
-    "30 7 * * 1-5": "13:00",
-    "30 13 * * 1-5": "19:00",
-    "30 4 * * 0,6": "10:00",
-    "30 12 * * 0,6": "18:00",
+    "30 2 * * *": "08:00",
+    "30 7 * * *": "13:00",
+    "30 13 * * *": "19:00",
 }
 
-SLOTS = {"08:00", "13:00", "19:00", "10:00", "18:00"}
+SLOTS = {"08:00", "13:00", "19:00"}
 
 
 class PublishError(RuntimeError):
@@ -68,7 +66,7 @@ def resolve_slot(args) -> str:
     if slot not in SLOTS:
         raise PublishError(
             "Could not determine posting slot. "
-            "Choose 08:00, 13:00, or 19:00 IST on weekdays; 10:00 or 18:00 IST on weekends."
+            "Choose 08:00, 13:00, or 19:00 IST."
         )
 
     return slot
