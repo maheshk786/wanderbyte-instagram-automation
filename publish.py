@@ -333,6 +333,38 @@ def publish_post(
     return str(media_id)
 
 
+
+def publish_story(
+    image_url: str,
+    ig_user_id: str,
+    token: str,
+    graph_base: str,
+) -> str:
+    """Publish the same public JPEG as an Instagram Story."""
+    container = graph_request(
+        "POST",
+        f"{graph_base}/{ig_user_id}/media",
+        token,
+        data={"image_url": image_url, "media_type": "STORIES"},
+    )
+    container_id = container.get("id")
+    if not container_id:
+        raise PublishError("Instagram did not return a Story container ID.")
+
+    print("Instagram Story container created.")
+    wait_until_ready(container_id, graph_base, token)
+    published = graph_request(
+        "POST",
+        f"{graph_base}/{ig_user_id}/media_publish",
+        token,
+        data={"creation_id": container_id},
+    )
+    media_id = published.get("id")
+    if not media_id:
+        raise PublishError("Instagram did not return a published Story media ID.")
+    return str(media_id)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Publish one queued Instagram photo."
@@ -365,10 +397,17 @@ def main() -> int:
 
         published_records = state.setdefault("published", [])
 
+        # Older records predate Story publishing; don't retroactively publish them.
+        for item in published_records:
+            if isinstance(item, dict) and item.get("media_id") and "story_status" not in item:
+                item["story_status"] = "legacy_no_story"
+
         published_ids = {
             str(item.get("post_id"))
             for item in published_records
-            if isinstance(item, dict) and item.get("post_id")
+            if isinstance(item, dict)
+            and item.get("post_id")
+            and item.get("story_status") in {"published", "legacy_no_story"}
         }
 
         post = choose_post(slot, queue, published_ids)
@@ -416,31 +455,68 @@ def main() -> int:
 
         graph_base = f"https://graph.instagram.com/{version}"
 
-        media_id = publish_post(
-            post=post,
+        ig_user_id = os.getenv("IG_USER_ID", "").strip()
+        token = os.getenv("IG_ACCESS_TOKEN", "").strip()
+        version = os.getenv("GRAPH_API_VERSION", "").strip()
+
+        if not ig_user_id or not token or not version:
+            raise PublishError(
+                "Missing IG_USER_ID, IG_ACCESS_TOKEN, or GRAPH_API_VERSION in GitHub Actions secrets."
+            )
+
+        if not re.fullmatch(r"v\\d+\\.0", version):
+            raise PublishError(
+                "GRAPH_API_VERSION must look like v26.0. Use a currently supported version from Meta."
+            )
+
+        # Feed and Story publishing use Instagram Graph API with Facebook Login.
+        graph_base = f"https://graph.facebook.com/{version}"
+        record = next(
+            (item for item in published_records
+             if isinstance(item, dict) and str(item.get("post_id")) == post_id),
+            None,
+        )
+
+        if record and record.get("media_id"):
+            print(f"Feed post already published for {post_id}; retrying Story only.")
+        else:
+            media_id = publish_post(
+                post=post,
+                image_url=image_url,
+                ig_user_id=ig_user_id,
+                token=token,
+                graph_base=graph_base,
+            )
+            record = {
+                "post_id": post_id,
+                "media_id": media_id,
+                "slot": slot,
+                "published_at_ist": datetime.now(IST).isoformat(timespec="seconds"),
+                "image": str(post["image"]),
+                "story_status": "pending",
+            }
+            published_records.append(record)
+            state["published"] = published_records
+            save_json(STATE_PATH, state)
+            print(f"Feed post published. Media ID: {media_id}")
+            print("Saved feed publication state before publishing the Story.")
+
+        story_media_id = publish_story(
             image_url=image_url,
             ig_user_id=ig_user_id,
             token=token,
             graph_base=graph_base,
         )
-
-        record = {
-            "post_id": post_id,
-            "media_id": media_id,
-            "slot": slot,
-            "published_at_ist": datetime.now(IST).isoformat(
-                timespec="seconds"
-            ),
-            "image": str(post["image"]),
-        }
-
-        published_records.append(record)
+        record["story_media_id"] = story_media_id
+        record["story_status"] = "published"
+        record["story_published_at_ist"] = datetime.now(IST).isoformat(timespec="seconds")
         state["published"] = published_records
         save_json(STATE_PATH, state)
 
-        print(f"Published successfully. Media ID: {media_id}")
-        print(f"Recorded publication state for {post_id}.")
+        print(f"Story published successfully. Media ID: {story_media_id}")
+        print(f"Recorded feed and Story publication state for {post_id}.")
         return 0
+
 
     except (
         PublishError,
