@@ -1,14 +1,14 @@
 # @wanderbyte.exe Instagram Automation
 
-A low-cost, scheduled Instagram photo publisher that publishes each queued image to both the feed and Stories using Python, GitHub Actions, and the Instagram Graph API with Facebook Login.
+A low-cost, scheduled Instagram JPEG feed publisher using Python, GitHub Actions, and the Instagram Graph API with Facebook Login.
 
 ## What is automated
 
-- Runs Monday through Friday at 08:00, 13:00, and 19:00 IST, and Saturday and Sunday at 10:00 and 18:00 IST.
+- Publishes one queued JPEG to the feed daily at 19:00 India Standard Time (IST).
 - Selects the next unpublished queue item for the matching slot.
-- Publishes each queued JPEG to the Instagram feed with caption, hashtags, and alt text, then publishes the same JPEG to Stories.
-- Records feed and Story media IDs in `state/published.json`; if Story publishing fails after the feed post succeeds, a later run for that same slot retries the Story without duplicating the feed post.
-- Moves the JPEG into `assets/images/Processed/` after both the feed post and Story publish successfully. Use a unique image file for each queue item; moved files are no longer at their original queue URL.
+- Publishes each queued JPEG to the Instagram feed with its caption, hashtags, and alt text.
+- Records the feed media ID in `state/published.json` to avoid duplicate posts and safely retry image processing.
+- Moves the JPEG into `assets/images/Processed/` after the feed post succeeds. Use a unique image file for each queue item; moved files are no longer at their original queue URL.
 - Supports manual test runs and manual publishing from the GitHub Actions tab.
 
 ## Important limitation: image generation
@@ -57,10 +57,10 @@ If you don't want your images and source files public, use a media host with pub
 
 ## 3. Configure Instagram and Meta
 
-This publisher uses the **Instagram Graph API with Facebook Login** for both feed and Story publishing. Stories require an Instagram Business account; Creator accounts are not eligible for Story publishing through this API.
+This publisher uses the **Instagram Graph API with Facebook Login** to publish feed photos.
 
 Prerequisites:
-- Instagram account is **Business**. Meta's Content Publishing API supports Stories only for Business accounts.
+- Instagram account is **Creator** or **Business**.
 - It is connected to a Facebook Page that you can administer.
 - Your Meta app has the Instagram Graph API / Instagram use case configured.
 - The app has the required permissions. Use a Facebook Page access token for publishing; generating it starts with a user access token. Publishing for accounts you don't own/manage may require App Review and Advanced Access.
@@ -106,14 +106,14 @@ GitHub Actions secrets are encrypted and can be referenced in workflows. Never p
 
 Edit `content/queue.json`. Each item needs:
 - `id`: unique ID, never reuse it.
-- `slot`: one of `08:00`, `13:00`, `19:00`, `10:00`, or `18:00`.
+- `slot`: `19:00` IST.
 - `image`: relative path under the repository root.
 - `caption`: caption text without hashtags.
 - `hashtags`: list of hashtags, with or without `#`.
 - `alt_text`: concise description for accessibility.
 - `enabled`: set to `true` to make it eligible.
 
-The included queue is a small starter sample, not a full backlog. Add unique queue items and matching JPEGs for every slot you want to fill. A 30-day backlog for this schedule requires about 81–82 posts, depending on which weekdays the month starts and ends with. The script picks the first enabled, unpublished item matching the slot. Keep a backlog of images for each slot. When a slot has no eligible item, the run safely skips instead of posting the wrong content.
+The included queue is a small starter sample, not a full backlog. Add unique queue items and matching JPEGs for a 30-day backlog of about 30 posts. The script picks the first enabled, unpublished item matching the slot. Keep a backlog of images for each slot. When a slot has no eligible item, the run safely skips instead of posting the wrong content.
 
 Example: use `assets/images/morning-forest.jpg` in the JSON and place that file at exactly that path.
 
@@ -129,18 +129,13 @@ Be honest about AI-generated scenes; don't caption a generated scene as a real t
 
 ## 6. Schedule
 
-The workflow uses UTC cron:
-- `30 2 * * 1-5` = weekdays at 08:00 IST
-- `30 7 * * 1-5` = weekdays at 13:00 IST
-- `30 13 * * 1-5` = weekdays at 19:00 IST
-- `30 4 * * 0,6` = weekends at 10:00 IST
-- `30 12 * * 0,6` = weekends at 18:00 IST
+The workflow uses UTC cron: `30 13 * * *` = daily at 19:00 IST.
 
 GitHub scheduled workflows can be delayed during periods of high load and are not a guaranteed real-time scheduler. Scheduled runs execute from the default branch. Keep the workflow on `main` (or update the YAML if your default branch differs).
 
 ## 7. Test safely
 
-1. First run **Actions → Instagram photo publisher → Run workflow** with `dry_run = true`. It validates the selected queue item and checks that the image URL is publicly reachable and returns JPEG content, without publishing.
+1. First run **Actions → Instagram daily photo publisher → Run workflow** with `dry_run = true`. It validates the selected queue item and checks that the image URL is publicly reachable and returns JPEG content, without publishing.
 2. Then run manually with `dry_run = false` and a chosen slot to publish one post.
 3. Check the Instagram account and the workflow logs.
 4. Scheduled runs use `dry_run = false` automatically.
@@ -162,7 +157,7 @@ Potentially paid / not included:
 - Additional GitHub Actions usage beyond the plan's allowance.
 - Any Meta app review/business requirements that apply to your account; the API is not a guaranteed bypass for account restrictions.
 
-This schedule has about 81–82 posts in a 30-day month. The code does not bypass Instagram's policies or rate limits.
+This schedule has about 30 posts in a 30-day month. The code does not bypass Instagram's policies or rate limits.
 
 ## Troubleshooting
 
