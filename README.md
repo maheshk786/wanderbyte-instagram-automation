@@ -126,7 +126,7 @@ The workflow uses these UTC cron times:
 - `30 7 * * *` = daily at 13:00 IST
 - `30 13 * * *` = daily at 19:00 IST.
 
-GitHub scheduled workflows can be delayed during periods of high load and are not a guaranteed real-time scheduler. Scheduled runs execute from the default branch. Keep the workflow on `main` (or update the YAML if your default branch differs).
+GitHub scheduled workflows can be delayed during periods of high load and are not a guaranteed real-time scheduler. This workflow skips scheduled posts if a run starts more than one hour after its IST slot, to avoid publishing stale posts overnight. Scheduled runs execute from the default branch. Keep the workflow on `main` (or update the YAML if your default branch differs).
 
 ## 7. Test safely
 
