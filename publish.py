@@ -455,8 +455,8 @@ def main() -> int:
                 "GRAPH_API_VERSION must look like v26.0. Use a currently supported version from Meta."
             )
 
-        # Feed publishing uses Instagram Graph API with Facebook Login.
-        graph_base = f"https://graph.facebook.com/{version}"
+        # Feed publishing uses Instagram API with Instagram Login.
+        graph_base = f"https://graph.instagram.com/{version}"
         if record and record.get("media_id"):
             print(f"Feed post already published for {post_id}; retrying image processing only.")
         else:
