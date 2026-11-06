@@ -1,4 +1,4 @@
-# @wanderbyte.exe Instagram Automation
+# @wanderbyte.ai Instagram Automation
 
 A low-cost, scheduled Instagram JPEG feed publisher using Python, GitHub Actions, and the Instagram Graph API with Facebook Login.
 
@@ -81,7 +81,7 @@ Use Meta's Graph API Explorer or your app's OAuth flow to obtain a user access t
 
 Find the Facebook Page connected to your Instagram account. Use the `instagram_business_account.id` value as `IG_USER_ID`. Use the connected Page's `access_token` value as `IG_ACCESS_TOKEN` (a Facebook Page access token, not an Instagram Login token). Follow Meta's current token-expiry and long-lived-token instructions; do not assume a short-lived token will keep working indefinitely.
 
-You can also inspect the Page/Instagram account relationship in Meta Business Suite. Never paste your access token into the repository, a source file, or a public issue.
+Because you switched to `@wanderbyte.ai`, replace both the `IG_USER_ID` and `IG_ACCESS_TOKEN` repository secrets with values for the new Instagram professional account and its connected Facebook Page. Get the new `IG_USER_ID` from that Page's `instagram_business_account.id` field, and use that same Page's `access_token` as `IG_ACCESS_TOKEN`. Keep the existing secret names; change only their values. Never paste your access token into the repository, a source file, or a public issue.
 
 Official documentation:
 - Instagram content publishing: https://developers.facebook.com/docs/instagram-platform/content-publishing/
