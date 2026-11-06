@@ -23,7 +23,7 @@ Automated AI image generation requires a separate image-generation API/service. 
 .
 ├── .github/workflows/instagram-publish.yml
 ├── assets/images/              # Queued public JPEGs served by GitHub Pages
-│   └── Processed/               # JPEGs moved here after feed and Story publish
+│   └── Processed/               # JPEGs moved here after the feed post succeeds
 ├── content/queue.json          # Captions, hashtags, image names, slot
 ├── state/published.json        # Automatically updated after publishing
 ├── publish.py
@@ -57,35 +57,27 @@ If you don't want your images and source files public, use a media host with pub
 
 ## 3. Configure Instagram and Meta
 
-This publisher uses the **Instagram Graph API with Facebook Login** to publish feed photos.
+This publisher uses the **Instagram API with Instagram Login** to publish feed photos.
 
 Prerequisites:
 - Instagram account is **Creator** or **Business**.
-- It is connected to a Facebook Page that you can administer.
-- Your Meta app has the Instagram Graph API / Instagram use case configured.
-- The app has the required permissions. Use a Facebook Page access token for publishing; generating it starts with a user access token. Publishing for accounts you don't own/manage may require App Review and Advanced Access.
+- Your Meta app has the Instagram API with Instagram Login configured for this professional account.
+- The app has the `instagram_business_basic` and `instagram_business_content_publish` permissions.
+- The app/account authorization must be valid for the account you intend to publish to. Publishing for accounts you don't own/manage may require App Review and Advanced Access.
 
-Typical permissions for this Facebook Login flow:
-- `instagram_basic`
-- `instagram_content_publish`
-- `pages_show_list`
-- `pages_read_engagement`
+Required publishing permissions for this Instagram Login flow:
+- `instagram_business_basic`
+- `instagram_business_content_publish`
 
 Meta's dashboard and requirements can change. Follow the current official Meta documentation and use the API version available to your app.
 
-### Find the Instagram professional account ID and token
+### Get the Instagram account ID and token
 
-Use Meta's Graph API Explorer or your app's OAuth flow to obtain a user access token with the required permissions. Then query:
-
-`GET https://graph.facebook.com/v{API_VERSION}/me/accounts?fields=id,name,access_token,instagram_business_account`
-
-Find the Facebook Page connected to your Instagram account. Use the `instagram_business_account.id` value as `IG_USER_ID`. Use the connected Page's `access_token` value as `IG_ACCESS_TOKEN` (a Facebook Page access token, not an Instagram Login token). Follow Meta's current token-expiry and long-lived-token instructions; do not assume a short-lived token will keep working indefinitely.
-
-Because you switched to `@wanderbyte.ai`, replace both the `IG_USER_ID` and `IG_ACCESS_TOKEN` repository secrets with values for the new Instagram professional account and its connected Facebook Page. Get the new `IG_USER_ID` from that Page's `instagram_business_account.id` field, and use that same Page's `access_token` as `IG_ACCESS_TOKEN`. Keep the existing secret names; change only their values. Never paste your access token into the repository, a source file, or a public issue.
+Authorize the `@wanderbyte.ai` professional account through your Meta app's **Instagram API with Instagram Login** setup. Use the Instagram user access token returned by that flow as `IG_ACCESS_TOKEN`, and the Instagram user ID returned for the same account as `IG_USER_ID`. Do not use a Facebook Page access token with this login flow. Follow Meta's current token-expiry and refresh instructions. Never paste your access token into the repository, a source file, or a public issue.
 
 Official documentation:
 - Instagram content publishing: https://developers.facebook.com/docs/instagram-platform/content-publishing/
-- Instagram API with Facebook Login: https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/
+- Instagram API with Instagram Login: https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/
 - Graph API Explorer: https://developers.facebook.com/tools/explorer/
 
 ## 4. Add GitHub secrets and variables
