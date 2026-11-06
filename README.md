@@ -1,6 +1,6 @@
 # @wanderbyte.ai Instagram Automation
 
-A low-cost, scheduled Instagram JPEG feed publisher using Python, GitHub Actions, and the Instagram Graph API with Facebook Login.
+A low-cost, scheduled Instagram JPEG feed publisher using Python, GitHub Actions, and the Instagram API with Instagram Login.
 
 ## What is automated
 
