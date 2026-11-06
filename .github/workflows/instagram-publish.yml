@@ -72,6 +72,28 @@ jobs:
             exit 0
           fi
 
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            case "$GITHUB_EVENT_SCHEDULE" in
+              "30 2 * * *") SCHEDULED_SLOT="08:00" ;;
+              "30 7 * * *") SCHEDULED_SLOT="13:00" ;;
+              "30 13 * * *") SCHEDULED_SLOT="19:00" ;;
+              *)
+                echo "Unrecognized schedule: $GITHUB_EVENT_SCHEDULE"
+                exit 1
+                ;;
+            esac
+
+            SLOT_EPOCH=$(TZ=Asia/Kolkata date -d "$IST_DATE $SCHEDULED_SLOT" +%s)
+            NOW_EPOCH=$(TZ=Asia/Kolkata date +%s)
+            DELAY_SECONDS=$((NOW_EPOCH - SLOT_EPOCH))
+
+            if (( DELAY_SECONDS < 0 || DELAY_SECONDS >= 3600 )); then
+              echo "Scheduled slot $SCHEDULED_SLOT IST is outside its one-hour posting window."
+              echo "Skipping this delayed run."
+              exit 0
+            fi
+          fi
+
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             python publish.py --slot "${{ inputs.slot }}"
           else
