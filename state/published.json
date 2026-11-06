@@ -5,28 +5,41 @@
       "media_id": "18091471550242993",
       "slot": "18:30",
       "published_at_ist": "2026-10-29T00:03:11+05:30",
-      "image": "assets/images/scooter_roadtrip.jpg"
+      "image": "assets/images/scooter_roadtrip.jpg",
+      "image_status": "legacy_not_moved"
     },
     {
       "post_id": "wanderbyte-winter-travel-001",
       "media_id": "18014262065971492",
       "slot": "21:00",
       "published_at_ist": "2026-10-29T01:58:09+05:30",
-      "image": "assets/images/winter_mountain_escape.jpg"
+      "image": "assets/images/winter_mountain_escape.jpg",
+      "image_status": "legacy_not_moved"
     },
     {
       "post_id": "wanderbyte-snow-mountains-001",
       "media_id": "18145363429608388",
       "slot": "09:00",
       "published_at_ist": "2026-10-29T15:46:18+05:30",
-      "image": "assets/images/snow_mountains.jpg"
+      "image": "assets/images/snow_mountains.jpg",
+      "image_status": "legacy_not_moved"
     },
     {
       "post_id": "wanderbyte-camping-001",
       "media_id": "18415353535081082",
       "slot": "13:00",
       "published_at_ist": "2026-10-29T20:02:26+05:30",
-      "image": "assets/images/solo_camping.jpg"
+      "image": "assets/images/solo_camping.jpg",
+      "image_status": "legacy_not_moved"
+    },
+    {
+      "post_id": "wanderbyte-himalayan-snow-001",
+      "media_id": "18093252563235276",
+      "slot": "19:00",
+      "published_at_ist": "2026-11-07T01:33:30+05:30",
+      "image": "assets/images/himalayan_snow_mountains.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/himalayan_snow_mountains.jpg"
     }
   ]
 }
