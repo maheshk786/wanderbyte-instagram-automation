@@ -121,12 +121,9 @@ Be honest about AI-generated scenes; don't caption a generated scene as a real t
 
 ## 6. Schedule
 
-The workflow uses these UTC cron times:
-- `30 2 * * *` = daily at 08:00 IST
-- `30 7 * * *` = daily at 13:00 IST
-- `30 13 * * *` = daily at 19:00 IST.
+The workflow attempts each daily slot at 08:00, 13:00, and 19:00 IST, with a second scheduled attempt 25 minutes later for each slot. It skips runs that start before their slot, including late runs that cross midnight.
 
-GitHub scheduled workflows can be delayed during periods of high load and are not a guaranteed real-time scheduler. This workflow skips scheduled posts if a run starts more than one hour after its IST slot, to avoid publishing stale posts overnight. Scheduled runs execute from the default branch. Keep the workflow on `main` (or update the YAML if your default branch differs).
+GitHub scheduled workflows can still be delayed or dropped during periods of high load, so exact-time delivery cannot be guaranteed. The retry attempts improve the chance of publishing on the same day. Scheduled runs execute from the default branch. Keep the workflow on `main` (or update the YAML if your default branch differs).
 
 ## 7. Test safely
 
