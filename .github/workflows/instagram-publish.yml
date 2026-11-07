@@ -2,10 +2,16 @@ name: Instagram photo publisher
 
 on:
   schedule:
-    # Daily: 08:00, 13:00, and 19:00 IST
+    # Main run and a 25-minute retry for each daily IST slot.
+    # 08:00 / 08:25 IST
     - cron: "30 2 * * *"
+    - cron: "55 2 * * *"
+    # 13:00 / 13:25 IST
     - cron: "30 7 * * *"
+    - cron: "55 7 * * *"
+    # 19:00 / 19:25 IST
     - cron: "30 13 * * *"
+    - cron: "55 13 * * *"
   workflow_dispatch:
     inputs:
       slot:
@@ -74,22 +80,25 @@ jobs:
 
           if [ "${{ github.event_name }}" = "schedule" ]; then
             case "$GITHUB_EVENT_SCHEDULE" in
-              "30 2 * * *") SCHEDULED_SLOT="08:00" ;;
-              "30 7 * * *") SCHEDULED_SLOT="13:00" ;;
-              "30 13 * * *") SCHEDULED_SLOT="19:00" ;;
+              "30 2 * * *"|"55 2 * * *") SCHEDULED_SLOT="08:00" ;;
+              "30 7 * * *"|"55 7 * * *") SCHEDULED_SLOT="13:00" ;;
+              "30 13 * * *"|"55 13 * * *") SCHEDULED_SLOT="19:00" ;;
               *)
                 echo "Unrecognized schedule: $GITHUB_EVENT_SCHEDULE"
                 exit 1
                 ;;
             esac
 
-            SLOT_EPOCH=$(TZ=Asia/Kolkata date -d "$IST_DATE $SCHEDULED_SLOT" +%s)
-            NOW_EPOCH=$(TZ=Asia/Kolkata date +%s)
-            DELAY_SECONDS=$((NOW_EPOCH - SLOT_EPOCH))
+            SLOT_HOUR=${SCHEDULED_SLOT%%:*}
+            SLOT_MINUTE=${SCHEDULED_SLOT##*:}
+            SLOT_MINUTES=$((10#$SLOT_HOUR * 60 + 10#$SLOT_MINUTE))
+            CURRENT_HOUR=$(TZ=Asia/Kolkata date +%H)
+            CURRENT_MINUTE=$(TZ=Asia/Kolkata date +%M)
+            CURRENT_MINUTES=$((10#$CURRENT_HOUR * 60 + 10#$CURRENT_MINUTE))
 
-            if (( DELAY_SECONDS < 0 || DELAY_SECONDS >= 3600 )); then
-              echo "Scheduled slot $SCHEDULED_SLOT IST is outside its one-hour posting window."
-              echo "Skipping this delayed run."
+            if (( CURRENT_MINUTES < SLOT_MINUTES )); then
+              echo "Scheduled slot $SCHEDULED_SLOT IST has not started yet today."
+              echo "Skipping this run to avoid posting before its slot."
               exit 0
             fi
           fi
