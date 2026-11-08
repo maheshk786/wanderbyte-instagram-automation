@@ -58,6 +58,15 @@
       "image": "assets/images/2026-11-09-slot-1300-snowy-leh.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/2026-11-09-slot-1300-snowy-leh.jpg"
+    },
+    {
+      "post_id": "wanderbyte-2026-11-09-1900",
+      "media_id": "17970080511191899",
+      "slot": "19:00",
+      "published_at_ist": "2026-11-08T23:57:29+05:30",
+      "image": "assets/images/2026-11-09-slot-1900-snow-mountain-sunrise.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/2026-11-09-slot-1900-snow-mountain-sunrise.jpg"
     }
   ]
 }
