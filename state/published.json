@@ -40,6 +40,15 @@
       "image": "assets/images/himalayan_snow_mountains.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/himalayan_snow_mountains.jpg"
+    },
+    {
+      "post_id": "wanderbyte-2026-11-09-0800",
+      "media_id": "17935360395414974",
+      "slot": "08:00",
+      "published_at_ist": "2026-11-08T14:46:50+05:30",
+      "image": "assets/images/2026-11-09-slot-0800-snow-mountain-morning.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/2026-11-09-slot-0800-snow-mountain-morning.jpg"
     }
   ]
 }
