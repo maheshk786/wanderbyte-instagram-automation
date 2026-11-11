@@ -1,41 +1,41 @@
 [
   {
-    "id": "wanderbyte-2026-11-09-0800",
+    "id": "wanderbyte-darcha-bridge-snow-001",
     "slot": "08:00",
-    "image": "assets/images/2026-11-09-slot-0800-snow-mountain-morning.jpg",
-    "caption": "A quiet winter morning in the mountains.\n\nSnow-covered peaks, fresh air, and the promise of a new day.",
+    "image": "assets/images/Darcha Bridge Amidst Himalayan Snow.jpg",
+    "caption": "A winter crossing beneath the Himalayas.\n\nSnow surrounds the Darcha bridge, with rugged mountain scenery all around.",
     "hashtags": [
-      "SnowMountains",
-      "WinterTravel",
-      "MountainEscape"
-    ],
-    "alt_text": "Snow-covered mountain peaks in soft morning light.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-2026-11-09-1300",
-    "slot": "13:00",
-    "image": "assets/images/2026-11-09-slot-1300-snowy-leh.jpg",
-    "caption": "A winter day beneath the Himalayas.\n\nSnowy mountain views make every journey feel a little more magical.",
-    "hashtags": [
-      "Leh",
-      "Ladakh",
-      "Himalayas"
-    ],
-    "alt_text": "A snowy Himalayan landscape near Leh.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-2026-11-09-1900",
-    "slot": "19:00",
-    "image": "assets/images/2026-11-09-slot-1900-snow-mountain-sunrise.jpg",
-    "caption": "The mountains glow as a new day begins.\n\nA peaceful sunrise over a snow-covered Himalayan landscape.",
-    "hashtags": [
-      "MountainSunrise",
-      "HimalayanWinter",
+      "Darcha",
+      "Himalayas",
       "WinterTravel"
     ],
-    "alt_text": "Sunrise light over snow-covered Himalayan peaks.",
+    "alt_text": "A bridge at Darcha surrounded by a snowy Himalayan landscape.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-jispa-snow-valley-001",
+    "slot": "13:00",
+    "image": "assets/images/Jispa_ Himalayan Snow Valley Retreat.jpg",
+    "caption": "A peaceful retreat in a snowy Himalayan valley.\n\nJispa's winter landscape is made for a slower mountain escape.",
+    "hashtags": [
+      "Jispa",
+      "HimachalPradesh",
+      "HimalayanWinter"
+    ],
+    "alt_text": "A snow-covered Himalayan valley near Jispa.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-snowy-himalayan-icy-river-001",
+    "slot": "19:00",
+    "image": "assets/images/Snowy Himalayan Valley and Icy River.jpg",
+    "caption": "An icy river winds through a quiet snowy valley.\n\nA beautiful reminder of the stillness of winter in the Himalayas.",
+    "hashtags": [
+      "Himalayas",
+      "SnowyValley",
+      "WinterTravel"
+    ],
+    "alt_text": "An icy river flowing through a snow-covered Himalayan valley.",
     "enabled": true
   }
 ]
