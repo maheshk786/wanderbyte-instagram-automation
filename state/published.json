@@ -67,6 +67,15 @@
       "image": "assets/images/2026-11-09-slot-1900-snow-mountain-sunrise.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/2026-11-09-slot-1900-snow-mountain-sunrise.jpg"
+    },
+    {
+      "post_id": "wanderbyte-darcha-bridge-snow-001",
+      "media_id": "17874026133641956",
+      "slot": "08:00",
+      "published_at_ist": "2026-11-11T15:10:20+05:30",
+      "image": "assets/images/Darcha Bridge Amidst Himalayan Snow.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Darcha Bridge Amidst Himalayan Snow.jpg"
     }
   ]
 }
