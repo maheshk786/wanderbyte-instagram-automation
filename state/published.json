@@ -85,6 +85,15 @@
       "image": "assets/images/Jispa_ Himalayan Snow Valley Retreat.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/Jispa_ Himalayan Snow Valley Retreat.jpg"
+    },
+    {
+      "post_id": "wanderbyte-aurora-mountain-night-001",
+      "media_id": "18118504733163968",
+      "slot": "08:00",
+      "published_at_ist": "2026-11-12T15:30:56+05:30",
+      "image": "assets/images/Gemini_Generated_Image_5k1t5r5k1t5r5k1t.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Gemini_Generated_Image_5k1t5r5k1t5r5k1t.jpg"
     }
   ]
 }
