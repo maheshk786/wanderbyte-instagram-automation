@@ -94,6 +94,15 @@
       "image": "assets/images/Gemini_Generated_Image_5k1t5r5k1t5r5k1t.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/Gemini_Generated_Image_5k1t5r5k1t5r5k1t.jpg"
+    },
+    {
+      "post_id": "wanderbyte-frozen-alpine-lake-001",
+      "media_id": "18135022888738601",
+      "slot": "08:00",
+      "published_at_ist": "2026-11-12T15:53:06+05:30",
+      "image": "assets/images/Gemini_Generated_Image_jkakqajkakqajkak.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Gemini_Generated_Image_jkakqajkakqajkak.jpg"
     }
   ]
 }
