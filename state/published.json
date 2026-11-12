@@ -103,6 +103,15 @@
       "image": "assets/images/Gemini_Generated_Image_jkakqajkakqajkak.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/Gemini_Generated_Image_jkakqajkakqajkak.jpg"
+    },
+    {
+      "post_id": "wanderbyte-winter-hiker-ridge-001",
+      "media_id": "18119888975009501",
+      "slot": "13:00",
+      "published_at_ist": "2026-11-12T21:39:32+05:30",
+      "image": "assets/images/Gemini_Generated_Image_64gntv64gntv64gn.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Gemini_Generated_Image_64gntv64gntv64gn.jpg"
     }
   ]
 }
