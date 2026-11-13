@@ -3,7 +3,7 @@
     "id": "wanderbyte-icy-river-snow-001",
     "slot": "19:00",
     "image": "assets/images/Snowy Himalayan Valley and Icy River.jpg",
-    "caption": "An icy river cuts through a quiet snowy valley.\n\nThis Himalayan winter landscape is made for a slow mountain escape. Save this snowy valley for your travel list.",
+    "caption": "River ice in the Himalayas.\n\nClear water threads between snow-lined banks beneath a cold mountain valley. I'd walk slowly here and listen to the current.\n\nSave this winter valley for later.",
     "hashtags": [
       "Himalayas",
       "SnowyValley",
@@ -13,133 +13,94 @@
     "enabled": true
   },
   {
-    "id": "wanderbyte-aurora-mountain-night-001",
+    "id": "wanderbyte-cloudy-snowy-forest-001",
     "slot": "08:00",
-    "image": "assets/images/Gemini_Generated_Image_5k1t5r5k1t5r5k1t.jpg",
-    "caption": "A winter peak beneath the Milky Way.\n\nThe aurora glows above a snow-covered mountain under a star-filled night sky. Save this snowy mountain night for later.",
+    "image": "assets/images/Gemini_Generated_Image_rqdjyvrqdjyvrqdj.jpg",
+    "caption": "Low cloud over the conifers.\n\nFrosted evergreens climb the snowy slope until a gray ridge vanishes into the mist. That's my kind of winter walk, with time for a few photos.\n\nSave this snowy forest for your next mountain trip.",
     "hashtags": [
-      "SnowyMountains",
-      "Aurora",
+      "SnowyForest",
+      "MountainViews",
       "WinterTravel"
     ],
-    "alt_text": "A snow-covered mountain beneath the Milky Way and green aurora.",
+    "alt_text": "Low clouds hang over snow-covered trees and a misty mountain ridge.",
     "enabled": true
   },
   {
-    "id": "wanderbyte-winter-hiker-ridge-001",
+    "id": "wanderbyte-aurora-mountain-night-001",
     "slot": "13:00",
-    "image": "assets/images/Gemini_Generated_Image_64gntv64gntv64gn.jpg",
-    "caption": "A lone hiker finds a path through the snow.\n\nThis high-alpine winter hike opens onto wide views of snow-covered mountain peaks. Save this trail idea for your next cold-weather trip.",
+    "image": "assets/images/Gemini_Generated_Image_lc85eclc85eclc85.jpg",
+    "caption": "Milky Way over a snowy summit.\n\nGreen aurora spills across the night above a sharp alpine peak. No town lights, just stars and a quiet valley.\n\nI'd stay up for a sky like this. Save this mountain nightscape.",
     "hashtags": [
-      "WinterHiking",
+      "AuroraBorealis",
       "SnowyMountains",
-      "MountainTravel"
+      "NightSky"
     ],
-    "alt_text": "A hiker in a red jacket walks along a snowy ridge with mountain peaks beyond.",
+    "alt_text": "A snowy mountain beneath the Milky Way and a green aurora.",
     "enabled": true
   },
   {
     "id": "wanderbyte-alpenglow-peaks-001",
     "slot": "19:00",
     "image": "assets/images/Gemini_Generated_Image_cgx5gocgx5gocgx5.jpg",
-    "caption": "The last light turns the snowy peaks gold.\n\nAlpenglow settles over a winter mountain range as evening arrives. Save this alpine sunset for your winter travel inspiration.",
+    "caption": "Pink light on the ridgeline.\n\nAlpenglow colors the snowy summit while blue shadow spreads across the valley. I'd wait through the cold afternoon for this sunset.\n\nSave it for your alpine trip.",
     "hashtags": [
       "Alpenglow",
       "SnowyMountains",
       "WinterTravel"
     ],
-    "alt_text": "Warm sunset light illuminates the snowy peaks of a mountain range.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-frozen-alpine-lake-001",
-    "slot": "08:00",
-    "image": "assets/images/Gemini_Generated_Image_jkakqajkakqajkak.jpg",
-    "caption": "A frozen lake mirrors the winter mountains.\n\nSnow, ice, and a quiet alpine shoreline make this a beautiful mountain escape. Save this frozen-lake view for later.",
-    "hashtags": [
-      "FrozenLake",
-      "SnowyMountains",
-      "AlpineTravel"
-    ],
-    "alt_text": "A partly frozen lake reflects snowy mountains beneath a cloudy sky.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-snowy-forest-sunrise-001",
-    "slot": "13:00",
-    "image": "assets/images/Gemini_Generated_Image_lc85eclc85eclc85.jpg",
-    "caption": "Stars fade above a snow-covered mountain.\n\nGreen aurora lights the winter night sky over a quiet alpine valley. Save this mountain nightscape for your travel list.",
-    "hashtags": [
-      "AuroraBorealis",
-      "SnowyMountains",
-      "NightSky"
-    ],
-    "alt_text": "A snowy mountain beneath a star-filled sky and green aurora.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-alpine-forest-peaks-001",
-    "slot": "19:00",
-    "image": "assets/images/Gemini_Generated_Image_pz1d08pz1d08pz1d.jpg",
-    "caption": "A forest of snow leads to towering peaks.\n\nFresh powder covers the alpine slopes and evergreen trees in this peaceful winter mountain scene. Save it for a future mountain getaway.",
-    "hashtags": [
-      "AlpineForest",
-      "SnowyMountains",
-      "WinterEscape"
-    ],
-    "alt_text": "Snow-covered evergreen trees in the foreground of a tall alpine mountain range.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-cloudy-snowy-forest-001",
-    "slot": "08:00",
-    "image": "assets/images/Gemini_Generated_Image_rqdjyvrqdjyvrqdj.jpg",
-    "caption": "Clouds gather over a quiet winter forest.\n\nSnow-covered trees climb the mountain slopes beneath a misty sky. Save this peaceful snowy forest for your next winter trip.",
-    "hashtags": [
-      "SnowyForest",
-      "MountainViews",
-      "WinterTravel"
-    ],
-    "alt_text": "A cloudy winter sky hangs over a snow-covered forest and mountain ridge.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-blue-snowy-peaks-001",
-    "slot": "13:00",
-    "image": "assets/images/Gemini_Generated_Image_u8bqamu8bqamu8bq.jpg",
-    "caption": "Blue skies, endless snow-covered peaks.\n\nA crisp alpine day brings the high mountain landscape into view. Save this snowy mountain scenery for your travel inspiration.",
-    "hashtags": [
-      "SnowyPeaks",
-      "AlpineTravel",
-      "MountainEscape"
-    ],
-    "alt_text": "Bright blue sky above a broad range of snow-covered mountain peaks.",
-    "enabled": true
-  },
-  {
-    "id": "wanderbyte-misty-winter-mountain-001",
-    "slot": "19:00",
-    "image": "assets/images/Gemini_Generated_Image_ub59khub59khub59.jpg",
-    "caption": "A misty ridge disappears into the snow.\n\nLow clouds drift across a rugged winter mountain, creating a quiet alpine scene. Save this mountain view for later.",
-    "hashtags": [
-      "WinterMountains",
-      "SnowyLandscape",
-      "MountainTravel"
-    ],
-    "alt_text": "Mist and clouds move around a rugged snow-covered mountain ridge.",
+    "alt_text": "Pink-orange sunset light reaches a snowy mountain ridgeline.",
     "enabled": true
   },
   {
     "id": "wanderbyte-aurora-lake-reflection-001",
     "slot": "08:00",
     "image": "assets/images/Gemini_Generated_Image_wc8l4xwc8l4xwc8l.jpg",
-    "caption": "Aurora shimmers above a frozen mountain lake.\n\nGreen light reflects across the winter water beneath a starry sky. Save this snowy mountain night for your travel list.",
+    "caption": "Green aurora on still water.\n\nA frozen mountain lake holds the reflection of snowy peaks and a sky full of stars. The shoreline looks silent beneath the winter night.\n\nSave this aurora lake for later.",
     "hashtags": [
       "Aurora",
       "FrozenLake",
       "SnowyMountains"
     ],
-    "alt_text": "Green aurora and stars reflect in a lake below snowy mountains.",
+    "alt_text": "Green aurora and stars reflect across a lake below snowy mountains.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-blue-snowy-peaks-001",
+    "slot": "13:00",
+    "image": "assets/images/Gemini_Generated_Image_u8bqamu8bqamu8bq.jpg",
+    "caption": "Cobalt sky, white mountain layers.\n\nClear winter light picks out each ridgeline across this broad alpine range. I'd take the longer trail for a view like this.\n\nSave this snowy peak scenery for your next mountain getaway.",
+    "hashtags": [
+      "SnowyPeaks",
+      "AlpineTravel",
+      "MountainEscape"
+    ],
+    "alt_text": "A bright blue sky above layers of snow-covered mountain peaks.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-alpine-forest-peaks-001",
+    "slot": "19:00",
+    "image": "assets/images/Gemini_Generated_Image_pz1d08pz1d08pz1d.jpg",
+    "caption": "Fresh snow reaches the summit.\n\nEvergreen trees fill the foreground while warm light catches the high alpine peak. A crisp mountain morning like this makes me want to lace up and go.\n\nSave this winter scene for your trip list.",
+    "hashtags": [
+      "AlpineForest",
+      "SnowyMountains",
+      "WinterEscape"
+    ],
+    "alt_text": "Snow-covered evergreen trees lead toward a tall mountain peak.",
+    "enabled": true
+  },
+  {
+    "id": "wanderbyte-misty-winter-mountain-001",
+    "slot": "08:00",
+    "image": "assets/images/Gemini_Generated_Image_ub59khub59khub59.jpg",
+    "caption": "The ridge disappears into cloud.\n\nMist moves over dark rock and snow-coated trees below the mountain crest. The view keeps changing, and I'd be happy to watch it for a while.\n\nSave this quiet winter mountain for later.",
+    "hashtags": [
+      "WinterMountains",
+      "SnowyLandscape",
+      "MountainTravel"
+    ],
+    "alt_text": "Mist moves around a dark rocky ridge above snow-covered trees.",
     "enabled": true
   }
 ]
