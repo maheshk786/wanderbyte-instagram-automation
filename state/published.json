@@ -121,6 +121,15 @@
       "image": "assets/images/Gemini_Generated_Image_rqdjyvrqdjyvrqdj.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/Gemini_Generated_Image_rqdjyvrqdjyvrqdj.jpg"
+    },
+    {
+      "post_id": "wanderbyte-milky-way-snowy-summit-001",
+      "media_id": "18213998152362315",
+      "slot": "13:00",
+      "published_at_ist": "2026-11-13T21:08:23+05:30",
+      "image": "assets/images/Gemini_Generated_Image_lc85eclc85eclc85.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Gemini_Generated_Image_lc85eclc85eclc85.jpg"
     }
   ]
 }
