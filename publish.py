@@ -412,7 +412,53 @@ def main() -> int:
             and item.get("image_status") in {"moved", "legacy_not_moved"}
         }
 
-        post = choose_post(slot, queue, published_ids)
+        # Scheduled 25-minute retry runs must not consume a second queued image
+        # after this slot has already published successfully today.
+        today_ist = datetime.now(IST).date().isoformat()
+        slot_record = next(
+            (
+                item
+                for item in reversed(published_records)
+                if isinstance(item, dict)
+                and item.get("slot") == slot
+                and str(item.get("published_at_ist", "")).startswith(today_ist)
+                and item.get("media_id")
+            ),
+            None,
+        )
+
+        if slot_record and slot_record.get("image_status") in {
+            "moved", "legacy_not_moved"
+        }:
+            print(
+                f"A post for {slot} IST is already recorded today. "
+                "Skipping this retry to avoid publishing another image."
+            )
+            return 0
+
+        if slot_record:
+            # A previous run published the feed post but may not have finished
+            # moving the image. Resume that same item instead of selecting a new one.
+            slot_post_id = str(slot_record.get("post_id", ""))
+            post = next(
+                (
+                    item
+                    for item in queue
+                    if isinstance(item, dict)
+                    and str(item.get("id", "")) == slot_post_id
+                    and item.get("image")
+                    and item.get("caption")
+                ),
+                None,
+            )
+            if not post:
+                print(
+                    f"A post for {slot} IST is already recorded today, but its "
+                    "queue item is missing. Skipping to avoid a duplicate post."
+                )
+                return 0
+        else:
+            post = choose_post(slot, queue, published_ids)
 
         if not post:
             print(
