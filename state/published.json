@@ -112,6 +112,15 @@
       "image": "assets/images/Gemini_Generated_Image_64gntv64gntv64gn.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/Gemini_Generated_Image_64gntv64gntv64gn.jpg"
+    },
+    {
+      "post_id": "wanderbyte-cloudy-snowy-forest-001",
+      "media_id": "18115114088079920",
+      "slot": "08:00",
+      "published_at_ist": "2026-11-13T15:19:26+05:30",
+      "image": "assets/images/Gemini_Generated_Image_rqdjyvrqdjyvrqdj.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Gemini_Generated_Image_rqdjyvrqdjyvrqdj.jpg"
     }
   ]
 }
