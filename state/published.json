@@ -130,6 +130,15 @@
       "image": "assets/images/Gemini_Generated_Image_lc85eclc85eclc85.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/Gemini_Generated_Image_lc85eclc85eclc85.jpg"
+    },
+    {
+      "post_id": "wanderbyte-aurora-lake-reflection-001",
+      "media_id": "17890355223624807",
+      "slot": "08:00",
+      "published_at_ist": "2026-11-14T14:42:14+05:30",
+      "image": "assets/images/Gemini_Generated_Image_wc8l4xwc8l4xwc8l.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Gemini_Generated_Image_wc8l4xwc8l4xwc8l.jpg"
     }
   ]
 }
