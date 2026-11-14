@@ -139,6 +139,15 @@
       "image": "assets/images/Gemini_Generated_Image_wc8l4xwc8l4xwc8l.jpg",
       "image_status": "moved",
       "processed_image": "assets/images/Processed/Gemini_Generated_Image_wc8l4xwc8l4xwc8l.jpg"
+    },
+    {
+      "post_id": "wanderbyte-blue-snowy-peaks-001",
+      "media_id": "17931409305182724",
+      "slot": "13:00",
+      "published_at_ist": "2026-11-14T19:55:32+05:30",
+      "image": "assets/images/Gemini_Generated_Image_u8bqamu8bqamu8bq.jpg",
+      "image_status": "moved",
+      "processed_image": "assets/images/Processed/Gemini_Generated_Image_u8bqamu8bqamu8bq.jpg"
     }
   ]
 }
